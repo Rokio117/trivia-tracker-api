@@ -5,14 +5,18 @@ const cors = require("cors");
 const { CLIENT_ORIGIN } = require("./config");
 const helmet = require("helmet");
 const { NODE_ENV } = require("./config");
-
+const data = require("./data");
 const app = express();
 
 const morganOption = NODE_ENV === "production" ? "tiny" : "common";
 
+const teamsRouter = require("./users/teams/teams");
+
 app.use(morgan(morganOption));
 app.use(helmet());
 app.use(cors({ origin: CLIENT_ORIGIN }));
+
+app.use("/api/teams", teamsRouter);
 
 app.get("/", (req, res) => {
   res.send("Hello, world!");
