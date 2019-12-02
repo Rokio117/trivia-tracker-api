@@ -2,13 +2,10 @@ const express = require("express");
 const teamsService = require("./teams-service");
 const teamsRouter = express.Router();
 
-teamsRouter
-  .route("/")
-  .get((req, res, next) => {
-    console.log("get /api/teams ran");
-    teamsService.getAllTeams();
-  })
-  .then(teams => res.status(200).json(teams));
+teamsRouter.route("/").get((req, res, next) => {
+  console.log("get /api/teams ran");
+  res.json(teamsService.getAllTeams());
+});
 
 teamsRouter
   .route("/:team_code")
