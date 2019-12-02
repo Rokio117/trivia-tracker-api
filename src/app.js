@@ -10,7 +10,7 @@ const app = express();
 
 const morganOption = NODE_ENV === "production" ? "tiny" : "common";
 
-const teamsRouter = require("./users/teams/teams");
+const teamsRouter = require("./teams/teams");
 
 app.use(morgan(morganOption));
 app.use(helmet());

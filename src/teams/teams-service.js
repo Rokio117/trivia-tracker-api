@@ -1,5 +1,5 @@
 const express = require("express");
-const store = require("../../store");
+const store = require("../store");
 const teamsService = {
   doesExist(teamCode) {
     console.log(teamCode);
@@ -13,6 +13,15 @@ const teamsService = {
   },
   getTeamMembers(teamCode) {
     return store.teams.find(team => team.teamCode === teamCode).members;
+  },
+  getRoleOfMember(userName, teamCode) {
+    console.log(userName, teamCode);
+    return store.teams
+      .find(team => team.teamCode === teamCode)
+      .members.find(member => member.userName === userName).role;
+  },
+  userExists(userName) {
+    return store.users.map(user => user.userName).includes(userName);
   }
 };
 
