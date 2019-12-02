@@ -1,5 +1,5 @@
 const express = require("express");
-const app = express();
+const app = require("./app");
 
 const PORT = process.env.PORT || 3000;
 
@@ -7,9 +7,7 @@ const PORT = process.env.PORT || 3000;
 //   res.json({ ok: true });
 // });
 
-app.get("/api/", (req, res) => {
-  res.send("Hello, world!");
-});
+// app.get("/api/", (req, res) => {
+//   res.send("Hello, world!");
+// });
 app.listen(PORT, () => console.log(`Listening on port ${PORT}`));
-
-module.exports = { app };
