@@ -2,7 +2,7 @@ const express = require("express");
 const userService = require("./users-service");
 const usersRouter = express.Router();
 const jsonBodyParser = express.json();
-
+const teamService = require("../teams/teams-service");
 usersRouter
   .route("/")
   .get((req, res, next) => {
@@ -77,13 +77,42 @@ usersRouter
     res.json(userService.getUser(req.params.user_name));
   });
 
-usersRouter.route("/:user_name/teams").get((req, res, next) => {
-  if (!userService.userExists(req.params.user_name)) {
-    res.status(404).json({ error: "User does not exist" });
-  } else {
+usersRouter
+  .route("/:user_name/teams")
+  .get((req, res, next) => {
+    if (!userService.userExists(req.params.user_name)) {
+      res.status(404).json({ error: "User does not exist" });
+    } else {
+      res.json(userService.getUserTeams(req.params.user_name));
+    }
+  })
+  .post(jsonBodyParser, (req, res, next) => {
+    const { name, password, teamCode } = req.body;
+    console.log(name, password, teamCode, req.params.user_name);
+    const newUser = {
+      userName: req.params.user_name,
+      name: name.name,
+      password: password.password
+    };
+
+    if (userService.userExists(req.params.user_name)) {
+      res.status(404).json({ error: "UserName is taken" });
+    }
+    for (const [key, value] of Object.entries(newUser))
+      if (value == (null || ""))
+        return res.status(400).json({
+          error: `Missing '${key}' in request body`
+        });
+    if (!teamCode || teamCode === "") {
+      return res.status(400).json({
+        error: "Missing teamCode in request body"
+      });
+    } else if (!teamService.doesExist(teamCode)) {
+      return res.status(400).json({ error: "Team does not exist" });
+    }
+    userService.postUserWithTeam(newUser, teamCode);
     res.json(userService.getUserTeams(req.params.user_name));
-  }
-});
+  });
 
 usersRouter.route("/:user_name/profile").get((req, res, next) => {
   if (!userService.userExists(req.params.user_name)) {

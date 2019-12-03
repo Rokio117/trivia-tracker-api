@@ -1,5 +1,5 @@
 const store = require("../store");
-
+const teamService = require("../teams/teams-service");
 const usersService = {
   userExists(userName) {
     return store.users.map(user => user.userName).includes(userName);
@@ -49,6 +49,11 @@ const usersService = {
   },
   changePlayerName(newName, userName) {
     store.users.find(user => user.userName === userName).name = newName;
+  },
+  postUserWithTeam: (userObject, teamCode) => {
+    const user = { userName: userObject.userName, role: "Member" };
+    store.users.push(userObject);
+    store.teams.find(team => team.teamCode === teamCode).members.push(user);
   }
 };
 
