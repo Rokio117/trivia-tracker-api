@@ -8,7 +8,7 @@ teamsRouter
   .get((req, res, next) => {
     res.json(teamsService.getAllTeams());
   })
-  .post(jsonBodyParser, (req, res, next) => {
+  .post(jsonBodyParser, validateTeamNoExists, (req, res, next) => {
     const {
       name,
       teamCode,
@@ -37,140 +37,76 @@ teamsRouter
         return res.status(400).json({
           error: `Missing '${key}' in request body`
         });
-    if (teamsService.doesExist(teamCode)) {
-      return res.status(400).json({
-        error: "teamCode is taken"
-      });
-    }
     teamsService.postNewTeam(newTeam);
     res.json(teamsService.getTeam(teamCode));
   });
-
+//teamsRouter.route("/:team_code/*").get(validateTeamCode);
+//teamsRouter.route("/:team_code/*").all(validateTeamCode);
 teamsRouter
   .route("/:team_code/team")
-  .get((req, res, next) => {
-    if (!teamsService.doesExist(req.params.team_code)) {
-      return res.status(404).json({
-        error: "Team Does Not Exist"
-      });
-    } else {
-      res.json(teamsService.getTeam(req.params.team_code));
-    }
+  .get(validateTeamExists, (req, res, next) => {
+    res.json(teamsService.getTeam(req.params.team_code));
   })
-  .patch(jsonBodyParser, (req, res, next) => {
+  .patch(jsonBodyParser, validateTeamExists, (req, res, next) => {
     const teamCode = req.params.team_code;
     const newName = req.body.newName;
     if (newName === "" || undefined) {
-      return res.status(400).json({ error: "no name submitted" });
+      let err = new Error("no name submitted");
+      err.status = 400;
+      next(err);
     }
-    if (!teamsService.doesExist(teamCode)) {
-      return res.status(400).json({ errror: "Team doesn't exist" });
-    }
+
     teamsService.changeTeamName(newName, teamCode);
     return res.json(teamsService.getTeam(teamCode));
   });
 
 teamsRouter
   .route("/:team_code/members")
-  .get((req, res, next) => {
-    if (!teamsService.doesExist(req.params.team_code)) {
-      return res.status(404).json({
-        error: "Team Does Not Exist"
-      });
-    } else {
-      res.json(teamsService.getTeamMembers(req.params.team_code));
-    }
+  .get(validateTeamExists, (req, res, next) => {
+    res.json(teamsService.getTeamMembers(req.params.team_code));
   })
-  .post(jsonBodyParser, (req, res, next) => {
+  .post(jsonBodyParser, validateTeamExists, validateRole, (req, res, next) => {
     const { newMember, role } = req.body;
-    if (!teamsService.doesExist(req.params.team_code)) {
-      return res.status(404).json({
-        error: "Team Does Not Exist"
-      });
-    }
-    if (!teamsService.userExists(newMember)) {
-      return res.status(400).json({
-        error: "user does not exist"
-      });
-    }
-    const allowedRoles = ["Guest", "Member", "Reporter", "Captain"];
-    if (!allowedRoles.includes(role)) {
-      return res.status(400).json({
-        error: "Role must be one of Guest, Captain, Reporter, or Member"
-      });
-    }
     teamsService.addToTeam(newMember, req.params.team_code, role);
     res.json(teamsService.getTeamMembers(req.params.team_code));
   });
 
 teamsRouter
   .route("/:team_code/:user_name/role")
-  .get((req, res, next) => {
-    console.log(req.params);
-    const teamExists = teamsService.doesExist(req.params.team_code);
-    const userExists = teamsService.userExists(req.params.user_name);
-    if (!teamExists) {
-      return res.status(404).json({
-        error: "Team does not exist"
-      });
-    }
-    if (!userExists) {
-      return res.status(404).json({
-        error: "User does not exist"
-      });
-    }
-    if (teamExists && userExists) {
-      res.json(
-        teamsService.getRoleOfMember(req.params.user_name, req.params.team_code)
-      );
-    }
+  .get(validateTeamExists, validateUserExists, (req, res, next) => {
+    res.json(
+      teamsService.getRoleOfMember(req.params.user_name, req.params.team_code)
+    );
   })
-  .patch(jsonBodyParser, (req, res, next) => {
-    console.log(req.params);
-    const teamCode = req.params.team_code;
-    const userName = req.params.user_name;
-    const role = req.body.role;
-    if (!teamsService.doesExist(teamCode)) {
-      return res.status(404).json({
-        error: "Team does not exist"
-      });
+  .patch(
+    jsonBodyParser,
+    validateTeamExists,
+    validateUserExists,
+    validateRole,
+    (req, res, next) => {
+      console.log(req.params);
+      const teamCode = req.params.team_code;
+      const userName = req.params.user_name;
+      const role = req.body.role;
+      teamsService.changeRole(userName, role, teamCode);
+      res.json(teamsService.getRoleOfMember(userName, teamCode));
     }
-    if (!usersService.userExists(userName)) {
-      return res.status(404).json({
-        error: "user does not exist"
-      });
-    }
-    const allowedRoles = ["Guest", "Member", "Reporter", "Captain"];
-    if (!allowedRoles.includes(role)) {
-      return res.status(400).json({
-        error: "Role must be one of Guest, Captain, Reporter, or Member"
-      });
-    }
-    teamsService.changeRole(userName, role, teamCode);
-    res.json(teamsService.getRoleOfMember(userName, teamCode));
-  });
+  );
 
-teamsRouter.route("/:team_code/names").get((req, res, next) => {
-  const members = teamsService.getTeamMembers(req.params.team_code);
-  if (!teamsService.doesExist(req.params.team_code)) {
-    return res.status(404).json({
-      error: "Team Does Not Exist"
-    });
-  } else {
+teamsRouter
+  .route("/:team_code/names")
+  .get(validateTeamExists, (req, res, next) => {
+    const members = teamsService.getTeamMembers(req.params.team_code);
+
     res.json(teamsService.getNamedMembersOfTeam(members));
-  }
-});
+  });
 
 teamsRouter
   .route("/:team_code/winnings")
-  .patch(jsonBodyParser, (req, res, next) => {
+  .patch(jsonBodyParser, validateTeamExists, (req, res, next) => {
     console.log(req.body);
     console.log(typeof req.body.winnings);
-    if (!teamsService.doesExist(req.params.team_code)) {
-      return res.status(404).json({
-        error: "Team Does Not Exist"
-      });
-    }
+
     if (req.body === (null || undefined)) {
       return res.status(400).json({
         error: "Missing key 'winnings' in request body"
@@ -206,4 +142,56 @@ teamsRouter
         });
   });
 
+function validateTeamExists(req, res, next) {
+  req.team = teamsService.getTeam(req.params.team_code);
+  if (!req.team) {
+    let err = new Error("Team Does Not Exist");
+    err.status = 404;
+    next(err);
+  }
+
+  next();
+}
+function validateTeamNoExists(req, res, next) {
+  req.team = teamsService.getTeam(req.params.team_code);
+  if (req.team) {
+    let err = new Error("Team code is taken");
+    err.status = 400;
+    next(err);
+  }
+  next();
+}
+
+function teamError(err, req, res, next) {
+  const status = err.status || 500;
+  const message = err.message || "Unknown server error";
+  return res.status(status).json({
+    error: message
+  });
+}
+function validateUserExists(req, res, next) {
+  console.log(req.params.user_name, "userName in validateUerExists");
+  req.user = usersService.userExists(req.params.user_name);
+  console.log(req.user, "req.user in validateUserExists");
+  if (!req.user) {
+    let err = new Error("User does not exist");
+    err.status = 404;
+    next(err);
+  }
+  next();
+}
+function validateRole(req, res, next) {
+  const role = req.body.role;
+  const allowedRoles = ["Guest", "Member", "Reporter", "Captain"];
+  if (!allowedRoles.includes(role)) {
+    let err = new Error(
+      "Role must be one of Guest, Captain, Reporter, or Member"
+    );
+    err.status = 400;
+    next(err);
+  }
+  next();
+}
+
+teamsRouter.use(teamError);
 module.exports = teamsRouter;

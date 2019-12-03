@@ -8,7 +8,7 @@ usersRouter
   .get((req, res, next) => {
     res.json(userService.getAllusers());
   })
-  .post(jsonBodyParser, (req, res, next) => {
+  .post(jsonBodyParser, validateDuplicateUser, (req, res, next) => {
     console.log(req.body);
     const { userName, name, password } = req.body;
     const newUser = {
@@ -16,36 +16,27 @@ usersRouter
       name: name,
       password: password
     };
+
     for (const [key, value] of Object.entries(newUser))
       if (value == (null || ""))
         return res.status(400).json({
           error: `Missing '${key}' in request body`
         });
-    if (userService.userExists(userName)) {
-      return res.status(400).json({ error: "User already exists" });
-    }
-
     userService.postNewUserNoTeam(newUser);
     return res.json(userService.getAllusers());
   });
 
 usersRouter
   .route("/:user_name")
-  .get((req, res, next) => {
-    if (!userService.userExists(req.params.user_name)) {
-      res.status(404).json({ error: "User does not exist" });
-    } else {
-      res.json(userService.getUser(req.params.user_name));
-    }
+  .get(validateUserExists, (req, res, next) => {
+    res.json(userService.getUser(req.params.user_name));
   })
-  .patch(jsonBodyParser, (req, res, next) => {
+  .patch(jsonBodyParser, validateUserExists, (req, res, next) => {
     const { newUserName } = req.body;
     const newUser = {
       userName: newUserName
     };
-    if (!userService.userExists(req.params.user_name)) {
-      return res.status(404).json({ error: "User does not exist" });
-    }
+
     for (const [key, value] of Object.entries(newUser))
       if (value == (null || ""))
         return res.status(400).json({
@@ -57,19 +48,10 @@ usersRouter
 
 usersRouter
   .route("/:user_name/name")
-  .get((req, res, next) => {
-    if (!userService.userExists(req.params.user_name)) {
-      res.status(404).json({ error: "User does not exist" });
-    } else {
-      res.json(userService.getNameFromUserName(req.params.user_name));
-    }
+  .get(validateUserExists, (req, res, next) => {
+    res.json(userService.getNameFromUserName(req.params.user_name));
   })
-  .patch(jsonBodyParser, (req, res, next) => {
-    if (!userService.userExists(req.params.user_name)) {
-      return res.status(404).json({
-        error: "User does not exist"
-      });
-    }
+  .patch(jsonBodyParser, validateUserExists, (req, res, next) => {
     if (!req.body.name || req.body.name === "") {
       res.status(404).json({ error: "Missing name in request body" });
     }
@@ -79,14 +61,10 @@ usersRouter
 
 usersRouter
   .route("/:user_name/teams")
-  .get((req, res, next) => {
-    if (!userService.userExists(req.params.user_name)) {
-      res.status(404).json({ error: "User does not exist" });
-    } else {
-      res.json(userService.getUserTeams(req.params.user_name));
-    }
+  .get(validateUserExists, (req, res, next) => {
+    res.json(userService.getUserTeams(req.params.user_name));
   })
-  .post(jsonBodyParser, (req, res, next) => {
+  .post(jsonBodyParser, validateUserExists, (req, res, next) => {
     const { name, password, teamCode } = req.body;
     console.log(name, password, teamCode, req.params.user_name);
     const newUser = {
@@ -95,9 +73,6 @@ usersRouter
       password: password.password
     };
 
-    if (userService.userExists(req.params.user_name)) {
-      res.status(404).json({ error: "UserName is taken" });
-    }
     for (const [key, value] of Object.entries(newUser))
       if (value == (null || ""))
         return res.status(400).json({
@@ -114,12 +89,29 @@ usersRouter
     res.json(userService.getUserTeams(req.params.user_name));
   });
 
-usersRouter.route("/:user_name/profile").get((req, res, next) => {
-  if (!userService.userExists(req.params.user_name)) {
-    res.status(404).json({ error: "User does not exist" });
-  } else {
+usersRouter
+  .route("/:user_name/profile")
+  .get(validateUserExists, (req, res, next) => {
     res.json(userService.getUserProfile(req.params.user_name));
-  }
-});
+  });
 
+function validateUserExists(req, res, next) {
+  req.user = usersService.userExists(req.params.user_name);
+  if (!req.user) {
+    let err = new Error("User does not exist");
+    err.status = 404;
+    next(err);
+  }
+  next();
+}
+
+function validateDuplicateUser(req, res, next) {
+  req.user = usersService.userExists(req.params.userName);
+  if (req.user) {
+    let err = new Error("User name already exists");
+    err.status = 400;
+    next(err);
+  }
+  next();
+}
 module.exports = usersRouter;
