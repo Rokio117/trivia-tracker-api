@@ -3,12 +3,17 @@ const teamsService = require("./teams-service");
 const teamsRouter = express.Router();
 const jsonBodyParser = express.json();
 const usersService = require("../users/users-service");
+const validatePatchTeamCodeTeam = require("./teams-validators");
+const validatePostSlash = require("./teams-validators");
+teamsRouter.use(jsonBodyParser);
+teamsRouter.use(validateBodyTypes);
 teamsRouter
   .route("/")
   .get((req, res, next) => {
     res.json(teamsService.getAllTeams());
   })
-  .post(jsonBodyParser, validateTeamNoExists, (req, res, next) => {
+  .post(validateTeamNoExists, validatePostSlash, (req, res, next) => {
+    console.log(req.body.members);
     const {
       name,
       teamCode,
@@ -47,7 +52,7 @@ teamsRouter
   .get(validateTeamExists, (req, res, next) => {
     res.json(teamsService.getTeam(req.params.team_code));
   })
-  .patch(jsonBodyParser, validateTeamExists, (req, res, next) => {
+  .patch(validateTeamExists, validatePatchTeamCodeTeam, (req, res, next) => {
     const teamCode = req.params.team_code;
     const newName = req.body.newName;
     if (newName === "" || undefined) {
@@ -65,7 +70,7 @@ teamsRouter
   .get(validateTeamExists, (req, res, next) => {
     res.json(teamsService.getTeamMembers(req.params.team_code));
   })
-  .post(jsonBodyParser, validateTeamExists, validateRole, (req, res, next) => {
+  .post(validateTeamExists, validateRole, (req, res, next) => {
     const { newMember, role } = req.body;
     teamsService.addToTeam(newMember, req.params.team_code, role);
     res.json(teamsService.getTeamMembers(req.params.team_code));
@@ -74,12 +79,12 @@ teamsRouter
 teamsRouter
   .route("/:team_code/:user_name/role")
   .get(validateTeamExists, validateUserExists, (req, res, next) => {
+    console.log(req.params);
     res.json(
       teamsService.getRoleOfMember(req.params.user_name, req.params.team_code)
     );
   })
   .patch(
-    jsonBodyParser,
     validateTeamExists,
     validateUserExists,
     validateRole,
@@ -103,7 +108,7 @@ teamsRouter
 
 teamsRouter
   .route("/:team_code/winnings")
-  .patch(jsonBodyParser, validateTeamExists, (req, res, next) => {
+  .patch(validateTeamExists, (req, res, next) => {
     console.log(req.body);
     console.log(typeof req.body.winnings);
 
@@ -113,34 +118,31 @@ teamsRouter
       });
     }
     const winnings = req.body.winnings;
-    if (typeof winnings !== "number") {
-      return res.status(400).json({
-        error: "winnings must be a number"
-      });
-    }
+
     teamsService.changeWinnings(winnings, req.params.team_code);
     res.json(teamsService.getTeam(req.params.team_code));
   });
 
-teamsRouter
-  .route("/:team_code/event")
-  .post(jsonBodyParser, (req, res, next) => {
-    const { date, location, outcome, roster, position, winnings } = req.body;
+teamsRouter.route("/:team_code/event").post((req, res, next) => {
+  const { date, location, outcome, roster, position, winnings } = req.body;
 
-    const newEvent = {
-      date: date,
-      location: location,
-      outcome: outcome,
-      roster: roster,
-      position: position,
-      winnings: winnings
-    };
-    for (const [key, value] of Object.entries(newEvent))
-      if (value == (null || "" || undefined))
-        return res.status(400).json({
-          error: `Missing '${key}' in request body`
-        });
-  });
+  const newEvent = {
+    date: date,
+    location: location,
+    outcome: outcome,
+    roster: roster,
+    position: position,
+    winnings: winnings
+  };
+  for (const [key, value] of Object.entries(newEvent))
+    if (value == (null || "" || undefined))
+      return res.status(400).json({
+        error: `Missing '${key}' in request body`
+      });
+
+  teamsService.addEvent(newEvent, req.params.team_code);
+  res.json(teamsService.getTeam(req.params.team_code).history);
+});
 
 function validateTeamExists(req, res, next) {
   req.team = teamsService.getTeam(req.params.team_code);
@@ -153,8 +155,9 @@ function validateTeamExists(req, res, next) {
   next();
 }
 function validateTeamNoExists(req, res, next) {
-  req.team = teamsService.getTeam(req.params.team_code);
-  if (req.team) {
+  const exists = teamsService.getTeam(req.params.team_code);
+  console.log(exists, "exists in validate team dont exist");
+  if (exists) {
     let err = new Error("Team code is taken");
     err.status = 400;
     next(err);
@@ -189,6 +192,70 @@ function validateRole(req, res, next) {
     );
     err.status = 400;
     next(err);
+  }
+  next();
+}
+
+function validateBodyTypes(req, res, next) {
+  const possibleStringKeys = [
+    "name",
+    "teamCode",
+    "newName",
+    "newMember",
+    "userName",
+    "role",
+    "location",
+    "outcome",
+    "password",
+    "newUserName",
+    "position",
+    "date"
+  ];
+  const possibleNumberKeys = [
+    "wins",
+    "firstPlace",
+    "secondPlace",
+    "thirdPlace",
+    "winnings"
+  ];
+  const possibleArrayKeys = ["history", "roster", "members"];
+  const allPossibleKeys = [
+    ...possibleStringKeys,
+    ...possibleNumberKeys,
+    ...possibleArrayKeys
+  ];
+  if (req.body && req.body !== {}) {
+    const keys = Object.keys(req.body);
+    keys.forEach(key => {
+      if (allPossibleKeys.includes(key)) {
+        if (possibleStringKeys.includes(key)) {
+          if (typeof req.body[key] !== "string") {
+            let err = new Error(`${key} must be a string`);
+            err.status = 400;
+            next(err);
+          }
+        }
+        if (possibleArrayKeys.includes(key)) {
+          if (!Array.isArray(req.body[key])) {
+            let err = new Error(`${key} must be an array`);
+            err.status = 400;
+            next(err);
+          }
+        }
+        if (possibleNumberKeys.includes(key)) {
+          if (typeof req.body[key] !== "number") {
+            let err = new Error(`${key} must be an array`);
+            err.status = 400;
+            next(err);
+          }
+        }
+      } else {
+        let err = new Error(`Incorrect key: ${key} in body`);
+        err.status = 400;
+        next(err);
+      }
+    });
+    next();
   }
   next();
 }

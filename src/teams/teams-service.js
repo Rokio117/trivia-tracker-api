@@ -54,7 +54,7 @@ const teamsService = {
   changeTeamName: (name, teamCode) => {
     store.teams.find(team => team.teamCode === teamCode).name = name;
   },
-  addEvent(eventObject, teamCode) {
+  addEvent(event, teamCode) {
     const winnings =
       parseInt(store.teams.find(team => team.teamCode === teamCode).winnings) +
       parseInt(event.winnings);
