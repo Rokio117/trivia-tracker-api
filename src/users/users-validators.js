@@ -1,8 +1,8 @@
-function postNewUserNoTeamKeys(req, res, next) {}
-const requiredKeys = ["userName", "name", "password"];
-req.requiredKeys = requiredKeys;
-next();
-
+function postNewUserNoTeamKeys(req, res, next) {
+  const requiredKeys = ["userName", "name", "password"];
+  req.requiredKeys = requiredKeys;
+  next();
+}
 function patchChangeUserNameKeys(req, res, next) {
   const requiredKeys = ["newUserName"];
   req.requiredKeys = requiredKeys;

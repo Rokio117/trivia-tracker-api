@@ -5,6 +5,10 @@ const jsonBodyParser = express.json();
 const teamService = require("../teams/teams-service");
 const { validateBodyTypes } = require("../middleware");
 const { keyValidator } = require("../middleware");
+const { postNewUserNoTeamKeys } = require("./users-validators");
+const { patchChangeUserNameKeys } = require("./users-validators");
+const { patchChangePlayerNameKeys } = require("./users-validators");
+const { postUserWithTeamKeys } = require("./users-validators");
 //usersRouter.use(validateParamTypes);
 usersRouter.use(jsonBodyParser);
 usersRouter.use(validateBodyTypes);
@@ -14,57 +18,77 @@ usersRouter
   .get((req, res, next) => {
     res.json(userService.getAllusers());
   })
-  .post(validateDuplicateUser, (req, res, next) => {
-    console.log(req.body);
-    const { userName, name, password } = req.body;
-    const newUser = {
-      userName: userName,
-      name: name,
-      password: password
-    };
-    userService.postNewUserNoTeam(newUser);
-    return res.json(userService.getAllusers());
-  });
+  .post(
+    postNewUserNoTeamKeys,
+    keyValidator,
+    validateDuplicateUser,
+    (req, res, next) => {
+      console.log(req.body);
+      const { userName, name, password } = req.body;
+      const newUser = {
+        userName: userName,
+        name: name,
+        password: password
+      };
+      userService.postNewUserNoTeam(newUser);
+      return res.json(userService.getAllusers());
+    }
+  );
 
 usersRouter
   .route("/:user_name")
   .get(validateUserExists, (req, res, next) => {
     res.json(userService.getUser(req.params.user_name));
   })
-  .patch(validateUserExists, (req, res, next) => {
-    const { newUserName } = req.body;
-    userService.changeUserName(newUserName, req.params.user_name);
-    return res.json(userService.getAllusers());
-  });
+  .patch(
+    patchChangeUserNameKeys,
+    keyValidator,
+    validateUserExists,
+    (req, res, next) => {
+      const { newUserName } = req.body;
+      userService.changeUserName(newUserName, req.params.user_name);
+      return res.json(userService.getAllusers());
+    }
+  );
 
 usersRouter
   .route("/:user_name/name")
   .get(validateUserExists, (req, res, next) => {
     res.json(userService.getNameFromUserName(req.params.user_name));
   })
-  .patch(jsonBodyParser, validateUserExists, (req, res, next) => {
-    userService.changePlayerName(req.body.name, req.params.user_name);
-    res.json(userService.getUser(req.params.user_name));
-  });
+  .patch(
+    patchChangePlayerNameKeys,
+    keyValidator,
+    validateUserExists,
+    (req, res, next) => {
+      userService.changePlayerName(req.body.name, req.params.user_name);
+      res.json(userService.getUser(req.params.user_name));
+    }
+  );
 
 usersRouter
   .route("/:user_name/teams")
   .get(validateUserExists, (req, res, next) => {
     res.json(userService.getUserTeams(req.params.user_name));
   })
-  .post(validateDuplicateUser, (req, res, next) => {
-    const { name, password, teamCode } = req.body;
-    console.log(name, password, teamCode, req.params.user_name);
-    const newUser = {
-      userName: req.params.user_name,
-      name: name.name,
-      password: password.password
-    };
+  .post(
+    postUserWithTeamKeys,
+    keyValidator,
+    validateDuplicateUser,
+    (req, res, next) => {
+      const { name, password, teamCode } = req.body;
+      console.log(name, password, teamCode, req.params.user_name);
+      const newUser = {
+        userName: req.params.user_name,
+        name: name.name,
+        password: password.password
+      };
 
-    //validate team exists
-    userService.postUserWithTeam(newUser, teamCode);
-    res.json(userService.getUserTeams(req.params.user_name));
-  });
+      //validate team exists
+      userService.postUserWithTeam(newUser, teamCode);
+      res.json(userService.getUserTeams(req.params.user_name));
+    }
+  );
 
 usersRouter
   .route("/:user_name/profile")
