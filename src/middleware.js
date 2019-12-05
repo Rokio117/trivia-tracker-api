@@ -63,6 +63,31 @@ function validateBodyTypes(req, res, next) {
   next();
 }
 
+function keyValidator(req, res, next) {
+  requiredKeys = req.requiredKeys;
+  const keys = Object.keys(req.body);
+  requiredKeys.forEach(key => {
+    if (!keys.includes(key)) {
+      let err = new Error(`Missing key '${key}' in request body`);
+      err.status = 400;
+      next(err);
+    }
+  });
+  keys.forEach(key => {
+    if (req.body[key] === "" || undefined) {
+      let err = new Error(`Empty key '${key}' in request body`);
+      err.status = 400;
+      next(err);
+    }
+    if (!requiredKeys.includes(key)) {
+      let err = new Error(`Unnecessary key '${key}' in request body`);
+      err.status = 400;
+      next(err);
+    }
+  });
+  next();
+}
 module.exports = {
-  validateBodyTypes
+  validateBodyTypes,
+  keyValidator
 };

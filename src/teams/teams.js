@@ -11,7 +11,7 @@ const { validatePostTeamCodeMembers } = require("./teams-validators");
 const { validatePatchTeamCodeUserNameRole } = require("./teams-validators");
 const { validatePatchTeamCodeWinnings } = require("./teams-validators");
 const { validatePostTeamCodeEvent } = require("./teams-validators");
-const { keyValidator } = require("./teams-validators");
+const { keyValidator } = require("../middleware");
 teamsRouter.use(jsonBodyParser);
 teamsRouter.use(validateBodyTypes);
 //teamsRouter.route("/*").all(validateBodyTypes);
