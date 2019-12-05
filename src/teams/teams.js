@@ -3,51 +3,61 @@ const teamsService = require("./teams-service");
 const teamsRouter = express.Router();
 const jsonBodyParser = express.json();
 const usersService = require("../users/users-service");
-const validatePatchTeamCodeTeam = require("./teams-validators").default;
+const { validatePatchTeamCodeTeam } = require("./teams-validators");
 
-const validatePostSlash = require("./teams-validators").default;
-const validateBodyTypes = require("./teams-validators").default;
-
+const { validatePostSlash } = require("./teams-validators");
+const { validateBodyTypes } = require("../middleware");
+const { validatePostTeamCodeMembers } = require("./teams-validators");
+const { validatePatchTeamCodeUserNameRole } = require("./teams-validators");
+const { validatePatchTeamCodeWinnings } = require("./teams-validators");
+const { validatePostTeamCodeEvent } = require("./teams-validators");
+const { keyValidator } = require("./teams-validators");
 teamsRouter.use(jsonBodyParser);
 teamsRouter.use(validateBodyTypes);
+//teamsRouter.route("/*").all(validateBodyTypes);
 teamsRouter
   .route("/")
   .get((req, res, next) => {
     res.json(teamsService.getAllTeams());
   })
-  .post(validateTeamNoExists, validatePostSlash, (req, res, next) => {
-    console.log(req.body.members);
-    const {
-      name,
-      teamCode,
-      members,
-      wins,
-      firstPlace,
-      secondPlace,
-      thirdPlace,
-      winnings,
-      history
-    } = req.body;
-    const newTeam = {
-      name: name,
-      teamCode: teamCode,
-      members: members,
-      wins: wins,
-      firstPlace: firstPlace,
-      secondPlace: secondPlace,
-      thirdPlace: thirdPlace,
-      winnings: winnings,
-      history: history
-    };
-    console.log(newTeam, "newTeam in post /");
-    for (const [key, value] of Object.entries(newTeam))
-      if (value == (null || "" || undefined))
-        return res.status(400).json({
-          error: `Missing '${key}' in request body`
-        });
-    teamsService.postNewTeam(newTeam);
-    res.json(teamsService.getTeam(teamCode));
-  });
+  .post(
+    validatePostSlash,
+    validateTeamNoExists,
+    keyValidator,
+    (req, res, next) => {
+      console.log(req.body.members);
+      const {
+        name,
+        teamCode,
+        members,
+        wins,
+        firstPlace,
+        secondPlace,
+        thirdPlace,
+        winnings,
+        history
+      } = req.body;
+      const newTeam = {
+        name: name,
+        teamCode: teamCode,
+        members: members,
+        wins: wins,
+        firstPlace: firstPlace,
+        secondPlace: secondPlace,
+        thirdPlace: thirdPlace,
+        winnings: winnings,
+        history: history
+      };
+      console.log(newTeam, "newTeam in post /");
+      for (const [key, value] of Object.entries(newTeam))
+        if (value == (null || "" || undefined))
+          return res.status(400).json({
+            error: `Missing '${key}' in request body`
+          });
+      teamsService.postNewTeam(newTeam);
+      res.json(teamsService.getTeam(teamCode));
+    }
+  );
 //teamsRouter.route("/:team_code/*").get(validateTeamCode);
 //teamsRouter.route("/:team_code/*").all(validateTeamCode);
 teamsRouter
@@ -55,29 +65,41 @@ teamsRouter
   .get(validateTeamExists, (req, res, next) => {
     res.json(teamsService.getTeam(req.params.team_code));
   })
-  .patch(validateTeamExists, validatePatchTeamCodeTeam, (req, res, next) => {
-    const teamCode = req.params.team_code;
-    const newName = req.body.newName;
-    if (newName === "" || undefined) {
-      let err = new Error("no name submitted");
-      err.status = 400;
-      next(err);
-    }
+  .patch(
+    validateTeamExists,
+    validatePatchTeamCodeTeam,
+    keyValidator,
+    (req, res, next) => {
+      const teamCode = req.params.team_code;
+      const newName = req.body.newName;
+      if (newName === "" || undefined) {
+        let err = new Error("no name submitted");
+        err.status = 400;
+        next(err);
+      }
 
-    teamsService.changeTeamName(newName, teamCode);
-    return res.json(teamsService.getTeam(teamCode));
-  });
+      teamsService.changeTeamName(newName, teamCode);
+      return res.json(teamsService.getTeam(teamCode));
+    }
+  );
 
 teamsRouter
   .route("/:team_code/members")
   .get(validateTeamExists, (req, res, next) => {
     res.json(teamsService.getTeamMembers(req.params.team_code));
   })
-  .post(validateTeamExists, validateRole, (req, res, next) => {
-    const { newMember, role } = req.body;
-    teamsService.addToTeam(newMember, req.params.team_code, role);
-    res.json(teamsService.getTeamMembers(req.params.team_code));
-  });
+  .post(
+    validateTeamExists,
+    validateUserExists,
+    validatePostTeamCodeMembers,
+    keyValidator,
+    validateRole,
+    (req, res, next) => {
+      const { newMember, role } = req.body;
+      teamsService.addToTeam(newMember, req.params.team_code, role);
+      res.json(teamsService.getTeamMembers(req.params.team_code));
+    }
+  );
 
 teamsRouter
   .route("/:team_code/:user_name/role")
@@ -90,6 +112,8 @@ teamsRouter
   .patch(
     validateTeamExists,
     validateUserExists,
+    validatePatchTeamCodeUserNameRole,
+    keyValidator,
     validateRole,
     (req, res, next) => {
       console.log(req.params);
@@ -111,41 +135,48 @@ teamsRouter
 
 teamsRouter
   .route("/:team_code/winnings")
-  .patch(validateTeamExists, (req, res, next) => {
-    console.log(req.body);
-    console.log(typeof req.body.winnings);
+  .patch(
+    validateTeamExists,
+    validatePatchTeamCodeWinnings,
+    keyValidator,
+    (req, res, next) => {
+      console.log(req.body);
+      console.log(typeof req.body.winnings);
 
-    if (req.body === (null || undefined)) {
-      return res.status(400).json({
-        error: "Missing key 'winnings' in request body"
-      });
+      const winnings = req.body.winnings;
+
+      teamsService.changeWinnings(winnings, req.params.team_code);
+      res.json(teamsService.getTeam(req.params.team_code));
     }
-    const winnings = req.body.winnings;
+  );
 
-    teamsService.changeWinnings(winnings, req.params.team_code);
-    res.json(teamsService.getTeam(req.params.team_code));
-  });
+teamsRouter
+  .route("/:team_code/event")
+  .post(
+    validateTeamExists,
+    validatePostTeamCodeEvent,
+    keyValidator,
+    (req, res, next) => {
+      const { date, location, outcome, roster, position, winnings } = req.body;
 
-teamsRouter.route("/:team_code/event").post((req, res, next) => {
-  const { date, location, outcome, roster, position, winnings } = req.body;
+      const newEvent = {
+        date: date,
+        location: location,
+        outcome: outcome,
+        roster: roster,
+        position: position,
+        winnings: winnings
+      };
+      for (const [key, value] of Object.entries(newEvent))
+        if (value == (null || "" || undefined))
+          return res.status(400).json({
+            error: `Missing '${key}' in request body`
+          });
 
-  const newEvent = {
-    date: date,
-    location: location,
-    outcome: outcome,
-    roster: roster,
-    position: position,
-    winnings: winnings
-  };
-  for (const [key, value] of Object.entries(newEvent))
-    if (value == (null || "" || undefined))
-      return res.status(400).json({
-        error: `Missing '${key}' in request body`
-      });
-
-  teamsService.addEvent(newEvent, req.params.team_code);
-  res.json(teamsService.getTeam(req.params.team_code).history);
-});
+      teamsService.addEvent(newEvent, req.params.team_code);
+      res.json(teamsService.getTeam(req.params.team_code).history);
+    }
+  );
 
 function validateTeamExists(req, res, next) {
   req.team = teamsService.getTeam(req.params.team_code);
@@ -176,13 +207,22 @@ function teamError(err, req, res, next) {
   });
 }
 function validateUserExists(req, res, next) {
-  console.log(req.params.user_name, "userName in validateUerExists");
-  req.user = usersService.userExists(req.params.user_name);
-  console.log(req.user, "req.user in validateUserExists");
-  if (!req.user) {
-    let err = new Error("User does not exist");
-    err.status = 404;
-    next(err);
+  console.log("req.params.user_name", req.params.user_name);
+  console.log("req.body.newMember", req.body.newMember);
+  if (req.params.user_name) {
+    if (!usersService.userExists(req.params.user_name)) {
+      let err = new Error("User does not exist");
+      err.status = 404;
+      next(err);
+    }
+  }
+
+  if (req.body.newMember) {
+    if (!usersService.userExists(req.body.newMember)) {
+      let err = new Error("User does not exist");
+      err.status = 404;
+      next(err);
+    }
   }
   next();
 }

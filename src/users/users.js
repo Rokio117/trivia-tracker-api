@@ -3,7 +3,7 @@ const userService = require("./users-service");
 const usersRouter = express.Router();
 const jsonBodyParser = express.json();
 const teamService = require("../teams/teams-service");
-
+const { validateBodyTypes } = require("../middleware");
 //usersRouter.use(validateParamTypes);
 usersRouter.use(jsonBodyParser);
 usersRouter.use(validateBodyTypes);
@@ -142,67 +142,4 @@ function usersError(err, req, res, next) {
   });
 }
 
-function validateBodyTypes(req, res, next) {
-  const possibleStringKeys = [
-    "name",
-    "teamCode",
-    "newName",
-    "newMember",
-    "userName",
-    "role",
-    "location",
-    "outcome",
-    "password",
-    "newUserName",
-    "position",
-    "date"
-  ];
-  const possibleNumberKeys = [
-    "wins",
-    "firstPlace",
-    "secondPlace",
-    "thirdPlace",
-    "winnings"
-  ];
-  const possibleArrayKeys = ["history", "roster", "members"];
-  const allPossibleKeys = [
-    ...possibleStringKeys,
-    ...possibleNumberKeys,
-    ...possibleArrayKeys
-  ];
-  if (req.body && req.body !== {}) {
-    const keys = Object.keys(req.body);
-    keys.forEach(key => {
-      if (allPossibleKeys.includes(key)) {
-        if (possibleStringKeys.includes(key)) {
-          if (typeof req.body[key] !== "string") {
-            let err = new Error(`${key} must be a string`);
-            err.status = 400;
-            next(err);
-          }
-        }
-        if (possibleArrayKeys.includes(key)) {
-          if (typeof req.body[key] !== "array") {
-            let err = new Error(`${key} must be an array`);
-            err.status = 400;
-            next(err);
-          }
-        }
-        if (possibleNumberKeys.includes(key)) {
-          if (typeof req.body[key] !== "number") {
-            let err = new Error(`${key} must be an array`);
-            err.status = 400;
-            next(err);
-          }
-        }
-      } else {
-        let err = new Error(`Incorrect key: ${key} in body`);
-        err.status = 400;
-        next(err);
-      }
-    });
-    next();
-  }
-  next();
-}
 module.exports = usersRouter;
