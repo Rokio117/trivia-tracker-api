@@ -55,7 +55,6 @@ module.exports = {
   validatePostTeamCodeMembers,
   validatePatchTeamCodeUserNameRole,
   validatePatchTeamCodeWinnings,
-  validatePostTeamCodeEvent,
-  keyValidator
+  validatePostTeamCodeEvent
 };
 //module.exports = validatePatchTeamCodeTeam;

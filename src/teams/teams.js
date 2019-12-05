@@ -12,6 +12,9 @@ const { validatePatchTeamCodeUserNameRole } = require("./teams-validators");
 const { validatePatchTeamCodeWinnings } = require("./teams-validators");
 const { validatePostTeamCodeEvent } = require("./teams-validators");
 const { keyValidator } = require("../middleware");
+const { validateUserExists } = require("../middleware");
+const { validateTeamExists } = require("../middleware");
+const { serverError } = require("../middleware");
 teamsRouter.use(jsonBodyParser);
 teamsRouter.use(validateBodyTypes);
 //teamsRouter.route("/*").all(validateBodyTypes);
@@ -152,16 +155,6 @@ teamsRouter
     }
   );
 
-function validateTeamExists(req, res, next) {
-  req.team = teamsService.getTeam(req.params.team_code);
-  if (!req.team) {
-    let err = new Error("Team Does Not Exist");
-    err.status = 404;
-    next(err);
-  }
-
-  next();
-}
 function validateTeamNoExists(req, res, next) {
   const exists = teamsService.doesExist(req.body.teamCode);
   if (exists) {
@@ -172,31 +165,6 @@ function validateTeamNoExists(req, res, next) {
   next();
 }
 
-function teamError(err, req, res, next) {
-  const status = err.status || 500;
-  const message = err.message || "Unknown server error";
-  return res.status(status).json({
-    error: message
-  });
-}
-function validateUserExists(req, res, next) {
-  if (req.params.user_name) {
-    if (!usersService.userExists(req.params.user_name)) {
-      let err = new Error("User does not exist");
-      err.status = 404;
-      next(err);
-    }
-  }
-
-  if (req.body.newMember) {
-    if (!usersService.userExists(req.body.newMember)) {
-      let err = new Error("User does not exist");
-      err.status = 404;
-      next(err);
-    }
-  }
-  next();
-}
 function validateRole(req, res, next) {
   const role = req.body.role;
   const allowedRoles = ["Guest", "Member", "Reporter", "Captain"];
@@ -210,5 +178,5 @@ function validateRole(req, res, next) {
   next();
 }
 
-teamsRouter.use(teamError);
+teamsRouter.use(serverError);
 module.exports = teamsRouter;

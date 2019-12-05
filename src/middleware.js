@@ -1,3 +1,5 @@
+const teamsService = require("../src/teams/teams-service");
+
 function validateBodyTypes(req, res, next) {
   console.log("body validator ran");
   const possibleStringKeys = [
@@ -87,7 +89,46 @@ function keyValidator(req, res, next) {
   });
   next();
 }
+function validateUserExists(req, res, next) {
+  if (req.params.user_name) {
+    if (!usersService.userExists(req.params.user_name)) {
+      let err = new Error("User does not exist");
+      err.status = 404;
+      next(err);
+    }
+  }
+
+  if (req.body.newMember) {
+    if (!usersService.userExists(req.body.newMember)) {
+      let err = new Error("User does not exist");
+      err.status = 404;
+      next(err);
+    }
+  }
+  next();
+}
+function validateTeamExists(req, res, next) {
+  req.team = teamsService.getTeam(req.params.team_code);
+  if (!req.team) {
+    let err = new Error("Team Does Not Exist");
+    err.status = 404;
+    next(err);
+  }
+
+  next();
+}
+
+function serverError(err, req, res, next) {
+  const status = err.status || 500;
+  const message = err.message || "Unknown server error";
+  return res.status(status).json({
+    error: message
+  });
+}
 module.exports = {
   validateBodyTypes,
-  keyValidator
+  keyValidator,
+  validateUserExists,
+  validateTeamExists,
+  serverError
 };

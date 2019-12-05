@@ -4,6 +4,7 @@ const usersRouter = express.Router();
 const jsonBodyParser = express.json();
 const teamService = require("../teams/teams-service");
 const { validateBodyTypes } = require("../middleware");
+const { keyValidator } = require("../middleware");
 //usersRouter.use(validateParamTypes);
 usersRouter.use(jsonBodyParser);
 usersRouter.use(validateBodyTypes);
@@ -21,12 +22,6 @@ usersRouter
       name: name,
       password: password
     };
-
-    for (const [key, value] of Object.entries(newUser))
-      if (value == (null || ""))
-        return res.status(400).json({
-          error: `Missing '${key}' in request body`
-        });
     userService.postNewUserNoTeam(newUser);
     return res.json(userService.getAllusers());
   });
@@ -38,16 +33,7 @@ usersRouter
   })
   .patch(validateUserExists, (req, res, next) => {
     const { newUserName } = req.body;
-    const newUser = {
-      userName: newUserName
-    };
-
-    for (const [key, value] of Object.entries(newUser))
-      if (value == null || "")
-        return res.status(400).json({
-          error: `Missing '${key}' in request body`
-        });
-    userService.changeUserName(newUser.userName, req.params.user_name);
+    userService.changeUserName(newUserName, req.params.user_name);
     return res.json(userService.getAllusers());
   });
 
@@ -57,9 +43,6 @@ usersRouter
     res.json(userService.getNameFromUserName(req.params.user_name));
   })
   .patch(jsonBodyParser, validateUserExists, (req, res, next) => {
-    if (!req.body.name || req.body.name === "") {
-      res.status(404).json({ error: "Missing name in request body" });
-    }
     userService.changePlayerName(req.body.name, req.params.user_name);
     res.json(userService.getUser(req.params.user_name));
   });
@@ -78,18 +61,7 @@ usersRouter
       password: password.password
     };
 
-    for (const [key, value] of Object.entries(newUser))
-      if (value == (null || ""))
-        return res.status(400).json({
-          error: `Missing '${key}' in request body`
-        });
-    if (!teamCode || teamCode === "") {
-      return res.status(400).json({
-        error: "Missing teamCode in request body"
-      });
-    } else if (!teamService.doesExist(teamCode)) {
-      return res.status(400).json({ error: "Team does not exist" });
-    }
+    //validate team exists
     userService.postUserWithTeam(newUser, teamCode);
     res.json(userService.getUserTeams(req.params.user_name));
   });
