@@ -3,14 +3,9 @@ const teamsService = require("./teams-service");
 const teamsRouter = express.Router();
 const jsonBodyParser = express.json();
 const usersService = require("../users/users-service");
-const { validatePatchTeamCodeTeam } = require("./teams-validators");
 
-const { validatePostSlash } = require("./teams-validators");
 const { validateBodyTypes } = require("../middleware");
-const { validatePostTeamCodeMembers } = require("./teams-validators");
-const { validatePatchTeamCodeUserNameRole } = require("./teams-validators");
-const { validatePatchTeamCodeWinnings } = require("./teams-validators");
-const { validatePostTeamCodeEvent } = require("./teams-validators");
+
 const { keyValidator } = require("../middleware");
 const { validateUserExists } = require("../middleware");
 const { validateTeamExists } = require("../middleware");
@@ -18,7 +13,7 @@ const { serverError } = require("../middleware");
 const { validateEvent } = require("./teams-validators");
 teamsRouter.use(jsonBodyParser);
 teamsRouter.use(validateBodyTypes);
-//teamsRouter.route("/*").all(validateBodyTypes);
+
 teamsRouter
   .route("/")
   .get((req, res, next) => {

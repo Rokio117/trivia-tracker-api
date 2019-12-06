@@ -5,10 +5,6 @@ const jsonBodyParser = express.json();
 const teamService = require("../teams/teams-service");
 const { validateBodyTypes } = require("../middleware");
 const { keyValidator } = require("../middleware");
-const { postNewUserNoTeamKeys } = require("./users-validators");
-const { patchChangeUserNameKeys } = require("./users-validators");
-const { patchChangePlayerNameKeys } = require("./users-validators");
-const { postUserWithTeamKeys } = require("./users-validators");
 const { serverError } = require("../middleware");
 const { validateTeamExists } = require("../middleware");
 //usersRouter.use(validateParamTypes);
@@ -21,8 +17,7 @@ usersRouter
     res.json(userService.getAllusers());
   })
   .post(
-    postNewUserNoTeamKeys,
-    keyValidator,
+    keyValidator(["userName", "name", "password"]),
     validateDuplicateUser,
     (req, res, next) => {
       console.log(req.body);
@@ -43,8 +38,7 @@ usersRouter
     res.json(userService.getUser(req.params.user_name));
   })
   .patch(
-    patchChangeUserNameKeys,
-    keyValidator,
+    keyValidator(["newUserName"]),
     validateUserExists,
     (req, res, next) => {
       const { newUserName } = req.body;
@@ -58,15 +52,10 @@ usersRouter
   .get(validateUserExists, (req, res, next) => {
     res.json(userService.getNameFromUserName(req.params.user_name));
   })
-  .patch(
-    patchChangePlayerNameKeys,
-    keyValidator,
-    validateUserExists,
-    (req, res, next) => {
-      userService.changePlayerName(req.body.name, req.params.user_name);
-      res.json(userService.getUser(req.params.user_name));
-    }
-  );
+  .patch(keyValidator(["name"]), validateUserExists, (req, res, next) => {
+    userService.changePlayerName(req.body.name, req.params.user_name);
+    res.json(userService.getUser(req.params.user_name));
+  });
 
 usersRouter
   .route("/:user_name/teams")
@@ -74,8 +63,7 @@ usersRouter
     res.json(userService.getUserTeams(req.params.user_name));
   })
   .post(
-    postUserWithTeamKeys,
-    keyValidator,
+    keyValidator(["name", "password", "teamCode"]),
     validateDuplicateUser,
     validateTeamExists,
     (req, res, next) => {
