@@ -9,10 +9,12 @@ const { postNewUserNoTeamKeys } = require("./users-validators");
 const { patchChangeUserNameKeys } = require("./users-validators");
 const { patchChangePlayerNameKeys } = require("./users-validators");
 const { postUserWithTeamKeys } = require("./users-validators");
+const { serverError } = require("../middleware");
+const { validateTeamExists } = require("../middleware");
 //usersRouter.use(validateParamTypes);
 usersRouter.use(jsonBodyParser);
 usersRouter.use(validateBodyTypes);
-usersRouter.use(usersError);
+usersRouter.use(serverError);
 usersRouter
   .route("/")
   .get((req, res, next) => {
@@ -31,7 +33,7 @@ usersRouter
         password: password
       };
       userService.postNewUserNoTeam(newUser);
-      return res.json(userService.getAllusers());
+      res.json(userService.getAllusers());
     }
   );
 
@@ -47,7 +49,7 @@ usersRouter
     (req, res, next) => {
       const { newUserName } = req.body;
       userService.changeUserName(newUserName, req.params.user_name);
-      return res.json(userService.getAllusers());
+      res.json(userService.getAllusers());
     }
   );
 
@@ -75,9 +77,9 @@ usersRouter
     postUserWithTeamKeys,
     keyValidator,
     validateDuplicateUser,
+    validateTeamExists,
     (req, res, next) => {
       const { name, password, teamCode } = req.body;
-      console.log(name, password, teamCode, req.params.user_name);
       const newUser = {
         userName: req.params.user_name,
         name: name.name,
@@ -114,28 +116,6 @@ function validateDuplicateUser(req, res, next) {
     next(err);
   }
   next();
-}
-
-function validateParamTypes(req, res, next) {
-  const keys = Object.keys(req.params);
-  keys.forEach(key => {
-    if (key === "team_code" || "user_name") {
-      if (typeof req.params[key] !== "string") {
-        let err = new Error(` ${key} must be a string`);
-        err.status = 400;
-        next(err);
-      }
-      next();
-    }
-  });
-}
-
-function usersError(err, req, res, next) {
-  const status = err.status || 500;
-  const message = err.message || "Unknown server error";
-  return res.status(status).json({
-    error: message
-  });
 }
 
 module.exports = usersRouter;

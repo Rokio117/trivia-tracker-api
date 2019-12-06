@@ -108,8 +108,8 @@ function validateUserExists(req, res, next) {
   next();
 }
 function validateTeamExists(req, res, next) {
-  req.team = teamsService.getTeam(req.params.team_code);
-  if (!req.team) {
+  const team = req.params.team_code ? req.params.team_code : req.body.teamCode;
+  if (!teamsService.doesExist(team)) {
     let err = new Error("Team Does Not Exist");
     err.status = 404;
     next(err);

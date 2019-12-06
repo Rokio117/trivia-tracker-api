@@ -15,6 +15,7 @@ const { keyValidator } = require("../middleware");
 const { validateUserExists } = require("../middleware");
 const { validateTeamExists } = require("../middleware");
 const { serverError } = require("../middleware");
+const { validateEvent } = require("./teams-validators");
 teamsRouter.use(jsonBodyParser);
 teamsRouter.use(validateBodyTypes);
 //teamsRouter.route("/*").all(validateBodyTypes);
@@ -140,6 +141,7 @@ teamsRouter
     validateTeamExists,
     validatePostTeamCodeEvent,
     keyValidator,
+    validateEvent,
     (req, res, next) => {
       const { date, location, outcome, roster, position, winnings } = req.body;
       const newEvent = {
