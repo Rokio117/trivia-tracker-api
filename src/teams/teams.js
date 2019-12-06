@@ -25,9 +25,18 @@ teamsRouter
     res.json(teamsService.getAllTeams());
   })
   .post(
-    validatePostSlash,
     validateTeamNoExists,
-    keyValidator,
+    keyValidator([
+      "name",
+      "teamCode",
+      "members",
+      "wins",
+      "firstPlace",
+      "secondPlace",
+      "thirdPlace",
+      "winnings",
+      "history"
+    ]),
     (req, res, next) => {
       const {
         name,
@@ -64,8 +73,8 @@ teamsRouter
   })
   .patch(
     validateTeamExists,
-    validatePatchTeamCodeTeam,
-    keyValidator,
+
+    keyValidator(["newName"]),
     (req, res, next) => {
       const teamCode = req.params.team_code;
       const newName = req.body.newName;
@@ -76,14 +85,14 @@ teamsRouter
 
 teamsRouter
   .route("/:team_code/members")
-  .get(validateTeamExists, (req, res, next) => {
+  .get(validateTeamExists, () => (req, res, next) => {
     res.json(teamsService.getTeamMembers(req.params.team_code));
   })
   .post(
     validateTeamExists,
     validateUserExists,
-    validatePostTeamCodeMembers,
-    keyValidator,
+
+    keyValidator(["newMember", "role"]),
     validateRole,
     (req, res, next) => {
       const { newMember, role } = req.body;
@@ -102,8 +111,8 @@ teamsRouter
   .patch(
     validateTeamExists,
     validateUserExists,
-    validatePatchTeamCodeUserNameRole,
-    keyValidator,
+
+    keyValidator(["role"]),
     validateRole,
     (req, res, next) => {
       const teamCode = req.params.team_code;
@@ -122,40 +131,43 @@ teamsRouter
     res.json(teamsService.getNamedMembersOfTeam(members));
   });
 
-teamsRouter
-  .route("/:team_code/winnings")
-  .patch(
-    validateTeamExists,
-    validatePatchTeamCodeWinnings,
-    keyValidator,
-    (req, res, next) => {
-      const winnings = req.body.winnings;
-      teamsService.changeWinnings(winnings, req.params.team_code);
-      res.json(teamsService.getTeam(req.params.team_code));
-    }
-  );
+teamsRouter.route("/:team_code/winnings").patch(
+  validateTeamExists,
 
-teamsRouter
-  .route("/:team_code/event")
-  .post(
-    validateTeamExists,
-    validatePostTeamCodeEvent,
-    keyValidator,
-    validateEvent,
-    (req, res, next) => {
-      const { date, location, outcome, roster, position, winnings } = req.body;
-      const newEvent = {
-        date: date,
-        location: location,
-        outcome: outcome,
-        roster: roster,
-        position: position,
-        winnings: winnings
-      };
-      teamsService.addEvent(newEvent, req.params.team_code);
-      res.json(teamsService.getTeam(req.params.team_code).history);
-    }
-  );
+  keyValidator(["winnings"]),
+  (req, res, next) => {
+    const winnings = req.body.winnings;
+    teamsService.changeWinnings(winnings, req.params.team_code);
+    res.json(teamsService.getTeam(req.params.team_code));
+  }
+);
+
+teamsRouter.route("/:team_code/event").post(
+  validateTeamExists,
+
+  keyValidator([
+    "date",
+    "location",
+    "outcome",
+    "roster",
+    "position",
+    "winnings"
+  ]),
+  validateEvent,
+  (req, res, next) => {
+    const { date, location, outcome, roster, position, winnings } = req.body;
+    const newEvent = {
+      date: date,
+      location: location,
+      outcome: outcome,
+      roster: roster,
+      position: position,
+      winnings: winnings
+    };
+    teamsService.addEvent(newEvent, req.params.team_code);
+    res.json(teamsService.getTeam(req.params.team_code).history);
+  }
+);
 
 function validateTeamNoExists(req, res, next) {
   const exists = teamsService.doesExist(req.body.teamCode);
