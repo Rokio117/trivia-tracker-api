@@ -1,1 +1,1 @@
-DROP TABLE IF EXISTS trivia_members
+DROP TABLE IF EXISTS trivia_members;

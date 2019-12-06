@@ -3,4 +3,4 @@ CREATE TABLE trivia_players(
   userName TEXT NOT NULL UNIQUE,
   password TEXT NOT NULL,
   name TEXT NOT NULL
-)
+);

@@ -7,4 +7,4 @@ CREATE TABLE trivia_teams(
   secondPlace INTEGER NOT NULL,
   thirdPlace INTEGER NOT NULL,
   winnings INTEGER NOT NULL
-)
+);
