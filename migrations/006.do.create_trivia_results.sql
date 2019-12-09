@@ -1,4 +1,4 @@
-DROP TABLE IF EXISTS trivia_results;
+
 
 DROP TYPE IF EXISTS options;
 

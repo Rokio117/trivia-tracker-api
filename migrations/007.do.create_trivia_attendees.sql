@@ -1,4 +1,4 @@
-DROP TABLE IF EXISTS trivia_attendees;
+
 
 
 CREATE TABLE IF NOT EXISTS trivia_attendees(
