@@ -231,7 +231,7 @@ const store = {
       ]
     },
     {
-      name: "The Potters",
+      name: "Dumbledor's Army",
       teamCode: "Potter",
       members: [
         {
