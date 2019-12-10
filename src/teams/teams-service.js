@@ -6,8 +6,8 @@ const teamsService = {
     console.log(teamCode, "teamCode in doesExist");
     return store.teams.map(team => team.teamCode === teamCode).includes(true);
   },
-  getAllTeams() {
-    return store.teams;
+  getAllTeams(knex) {
+    return knex.select("*").from("trivia_teams");
   },
   getTeam(teamCode) {
     return store.teams.find(team => team.teamCode === teamCode);
