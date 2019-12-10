@@ -96,7 +96,7 @@ const store = {
           outcome: "Loss",
           roster: ["Rokio", "Ash"],
           position: "4th",
-          winnings: 20
+          winnings: 0
         },
         {
           date: "1/23/19",
@@ -209,7 +209,7 @@ const store = {
           location: "The Drunken Clam",
           outcome: "Win",
           roster: ["Demo", "Demo2"],
-          position: "2rd",
+          position: "2nd",
           winnings: 20
         },
         {
