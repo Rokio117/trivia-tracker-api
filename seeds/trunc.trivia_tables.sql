@@ -6,3 +6,5 @@ TRUNCATE
   trivia_teams,
   trivia_players
   RESTART IDENTITY CASCADE;
+
+  

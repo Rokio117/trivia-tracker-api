@@ -3,6 +3,7 @@ BEGIN;
 TRUNCATE 
   trivia_attendees,
   trivia_results,
+  trivia_locations,
   trivia_events,
   members,
   trivia_teams,
@@ -49,7 +50,6 @@ TRUNCATE
   (12,4),
   (13,4);
 
-
 INSERT INTO trivia_locations (locationName)
 VALUES
 ('Paddys Pub'),
@@ -57,7 +57,7 @@ VALUES
 ('Snakehole Lounge'),
 ('The Drunken Clam'),
 ('The Three Broomsticks'),
-('The Hogs Head')
+('The Hogs Head');
 
 
 INSERT INTO trivia_events (eventDate, eventLocation)
@@ -74,44 +74,40 @@ VALUES
 ('2019-12-12',5),
 ('2019-11-28',5),
 ('2019-11-21',5),
-('2019-12-05',5)
+('2019-12-05',5);
 
 
 INSERT INTO trivia_results (team_id, event_id, winnings, outcome, position)
 VALUES
 (1,1,0,'Loss','4th'),
 (1,2,30,'Win','1st'),
-
 (2,1,30,'Win','1st'),
 (2,2,30,'Win','1st'),
-
-(3,3,10,'Win','3rd',
+(3,3,10,'Win','3rd'),
 (3,9,10,'Win','3rd'),
 (3,5,10,'Win','3rd'),
 (3,6,20,'Win','2nd'),
 (3,7,20,'Win','2nd'),
 (3,8,30,'Win','1st'),
-
 (4,10,0,'Loss','4th'),
 (4,13,10,'Win','3rd'),
 (4,11,10,'Win','3rd'),
-(4,12,0,'Loss','11th')
+(4,12,0,'Loss','11th');
 
-INSERT INTO trivia_attendees(team_id, event_id, player_id)
+
+INSERT INTO trivia_attendees (team_id, event_id, player_id)
 VALUES
 (1,1,1),
 (1,1,2),
 (1,2,1),
 (1,2,2),
 (1,2,3),
-
 (2,1,1),
 (2,6,1),
 (2,4,1),
 (2,1,2),
 (2,6,2),
 (2,4,2),
-
 (3,3,7),
 (3,3,8),
 (3,3,9),
@@ -132,25 +128,20 @@ VALUES
 (3,8,8),
 (3,8,9),
 (3,8,10),
-
 (4,10,11),
 (4,10,12),
 (4,10,13),
 (4,10,7),
-
 (4,13,11),
 (4,13,12),
 (4,13,13),
 (4,13,7),
-
 (4,11,11),
 (4,11,12),
 (4,11,13),
-
 (4,12,11),
 (4,12,12),
-(4,12,13)
+(4,12,13);
 
 
-
-COMMIT
+COMMIT;
