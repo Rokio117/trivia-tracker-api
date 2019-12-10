@@ -17,7 +17,7 @@ describe.only("Users Endpoints", function() {
     console.log(process.env.TEST_DB_URL);
     db = knex({
       client: "pg",
-      connection: process.env.TEST_DB_URL
+      connection: process.env.DB_TEST_URL
     });
     app.set("db", db);
   });
