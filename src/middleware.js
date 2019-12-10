@@ -66,7 +66,9 @@ function validateBodyTypes(req, res, next) {
 }
 
 function keyValidator(requiredKeys = []) {
+  console.log("keyvalidator ran b4 inner function");
   return function(req, res, next) {
+    console.log("keyvalidator ran");
     //requiredKeys = req.requiredKeys;
     const keys = Object.keys(req.body) ? Object.keys(req.body) : [];
     requiredKeys.forEach(key => {

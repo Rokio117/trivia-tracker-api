@@ -12,13 +12,14 @@ usersRouter.use(jsonBodyParser);
 usersRouter.use(validateBodyTypes);
 usersRouter.use(serverError);
 
-const knexInstance = req.app.get("db");
 usersRouter
   .route("/")
   .get((req, res, next) => {
+    const knexInstance = req.app.get("db");
     //res.json(userService.getAllusers());
     userService.getAllusers(knexInstance).then(users => {
-      res.json(users);
+      console.log("res.json users ran");
+      return res.json(users);
     });
   })
   .post(
