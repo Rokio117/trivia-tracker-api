@@ -2,6 +2,7 @@ const knex = require("knex");
 const app = require("../src/app");
 const { cleanTables } = require("./helpers");
 const { seedData } = require("./seedData");
+require("dotenv").config();
 
 describe.only("Users Endpoints", function() {
   let db;
@@ -13,6 +14,7 @@ describe.only("Users Endpoints", function() {
   const results = seedData.results();
   const attendees = seedData.attendees();
   before("make knex instance", () => {
+    console.log(process.env.TEST_DB_URL);
     db = knex({
       client: "pg",
       connection: process.env.TEST_DB_URL
@@ -24,7 +26,7 @@ describe.only("Users Endpoints", function() {
   before("clean the tables", () => cleanTables(db));
   afterEach("clean up", () => cleanTables(db));
 
-  descrite(`Get /api/teams/`, () => {
+  describe(`Get /api/teams/`, () => {
     context(`Given no articles`, () => {
       it(`responds with an empty list`, () => {
         return supertest(app)

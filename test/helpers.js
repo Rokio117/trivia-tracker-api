@@ -1,4 +1,6 @@
 function cleanTables(db) {
+  console.log("cleanTables ran");
+  console.log("db in cleanTables", db);
   db.raw(
     `TRUNCATE 
   trivia_attendees,
