@@ -11,10 +11,15 @@ const { validateTeamExists } = require("../middleware");
 usersRouter.use(jsonBodyParser);
 usersRouter.use(validateBodyTypes);
 usersRouter.use(serverError);
+
+const knexInstance = req.app.get("db");
 usersRouter
   .route("/")
   .get((req, res, next) => {
-    res.json(userService.getAllusers());
+    //res.json(userService.getAllusers());
+    userService.getAllusers(knexInstance).then(users => {
+      res.json(users);
+    });
   })
   .post(
     keyValidator(["userName", "name", "password"]),

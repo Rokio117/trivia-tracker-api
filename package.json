@@ -25,13 +25,16 @@
     "dotenv": "^8.1.0",
     "express": "^4.17.1",
     "helmet": "^3.21.1",
-    "knex": "^0.20.3",
+    "knex": "^0.20.4",
     "morgan": "^1.9.1",
-    "nodemon": "^2.0.1",
     "pg": "^7.14.0",
     "postgrator": "^3.11.0"
   },
   "devDependencies": {
-    "postgrator-cli": "^3.2.0"
+    "chai": "^4.2.0",
+    "mocha": "^6.2.2",
+    "nodemon": "^2.0.1",
+    "postgrator-cli": "^3.2.0",
+    "supertest": "^4.0.2"
   }
 }

@@ -4,8 +4,8 @@ const usersService = {
   userExists(userName) {
     return store.users.map(user => user.userName).includes(userName);
   },
-  getAllusers() {
-    return store.users;
+  getAllusers(knex) {
+    return knex.select("*").from("trivia_players");
   },
   getUser(userName) {
     return store.users.find(user => user.userName === userName);
