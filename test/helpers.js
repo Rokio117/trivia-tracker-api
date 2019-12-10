@@ -11,8 +11,47 @@ function cleanTables(db) {
   );
 }
 
-function seedUsers(db, users) {}
+function seedPlayers(db, players) {}
+
+function seedTeams(db, teams) {}
+
+function seedMembers(db, members) {}
+
+function seedLocations(db, locations) {}
+
+function seedEvents(db, events) {}
+
+function seedResults(db, results) {}
+
+function seedAttendees(db, attendees) {}
+
+function seedAllTables(
+  db,
+  players,
+  teams,
+  members,
+  locations,
+  events,
+  results,
+  attendees
+) {
+  seedPlayers(db, players);
+  seedTeams(db, teams);
+  seedMembers(db, members);
+  seedLocations(db, locations);
+  seedEvents(db, events);
+  seedResults(db, results);
+  seedAttendees(db, attendees);
+}
 
 module.exports = {
-  cleanTables
+  cleanTables,
+  seedPlayers,
+  seedTeams,
+  seedMembers,
+  seedLocations,
+  seedEvents,
+  seedResults,
+  seedAttendees,
+  seedAllTables
 };

@@ -10,7 +10,6 @@ const { validateTeamExists } = require("../middleware");
 //usersRouter.use(validateParamTypes);
 usersRouter.use(jsonBodyParser);
 usersRouter.use(validateBodyTypes);
-usersRouter.use(serverError);
 
 usersRouter
   .route("/")
@@ -19,7 +18,7 @@ usersRouter
     //res.json(userService.getAllusers());
     userService.getAllusers(knexInstance).then(users => {
       console.log("res.json users ran");
-      return res.json(users);
+      res.json(users);
     });
   })
   .post(
@@ -91,6 +90,8 @@ usersRouter
   .get(validateUserExists, (req, res, next) => {
     res.json(userService.getUserProfile(req.params.user_name));
   });
+
+usersRouter.use(serverError);
 
 function validateUserExists(req, res, next) {
   req.user = userService.userExists(req.params.user_name);

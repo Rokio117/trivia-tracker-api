@@ -37,36 +37,35 @@ function validateBodyTypes(req, res, next) {
           if (typeof req.body[key] !== "string") {
             let err = new Error(`${key} must be a string`);
             err.status = 400;
-            next(err);
+            return next(err);
           }
         }
         if (possibleArrayKeys.includes(key)) {
           if (!Array.isArray(req.body[key])) {
             let err = new Error(`${key} must be an array`);
             err.status = 400;
-            next(err);
+            return next(err);
           }
         }
         if (possibleNumberKeys.includes(key)) {
           if (typeof req.body[key] !== "number") {
             let err = new Error(`${key} must be a number`);
             err.status = 400;
-            next(err);
+            return next(err);
           }
         }
       } else {
         let err = new Error(`Unexpected key: '${key}' in body`);
         err.status = 400;
-        next(err);
+        return next(err);
       }
     });
-    next();
+    return next();
   }
   next();
 }
 
 function keyValidator(requiredKeys = []) {
-  console.log("keyvalidator ran b4 inner function");
   return function(req, res, next) {
     console.log("keyvalidator ran");
     //requiredKeys = req.requiredKeys;
@@ -99,7 +98,7 @@ function validateUserExists(req, res, next) {
     if (!usersService.userExists(req.params.user_name)) {
       let err = new Error("User does not exist");
       err.status = 404;
-      next(err);
+      return next(err);
     }
   }
 
@@ -107,7 +106,7 @@ function validateUserExists(req, res, next) {
     if (!usersService.userExists(req.body.newMember)) {
       let err = new Error("User does not exist");
       err.status = 404;
-      next(err);
+      return next(err);
     }
   }
   next();
