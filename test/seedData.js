@@ -1,19 +1,34 @@
 const seedData = {
   users() {
     return [
-      { id: 1, userName: "Rokio", name: "Nick", password: "password" },
-      { id: 2, userName: "Jen", name: "Jennifer", password: "password" },
-      { id: 3, userName: "Ash", name: "Ashley", password: "password" },
-      { id: 4, userName: "Deandra", name: "Dee", password: "password" },
-      { id: 5, userName: "Charlie", name: "Charlie", password: "password" },
-      { id: 6, userName: "Mac", name: "Mac", password: "password" },
-      { id: 7, userName: "Demo", name: "Demo", password: "password" },
-      { id: 8, userName: "Demo2", name: "Demo Lovato", password: "password" },
-      { id: 9, userName: "Demo3", name: "Demo Moore", password: "password" },
-      { id: 10, userName: "Demo4", name: "Demenem", password: "password" },
-      { id: 11, userName: "Harry", name: "Harry", password: "password" },
-      { id: 12, userName: "Ron", name: "Ron", password: "password" },
-      { id: 13, userName: "Hermione", name: "Hermione", password: "password" }
+      { id: 1, userName: "Rokio", password: "password", nickName: "Nick" },
+      { id: 2, userName: "Jen", password: "password", nickName: "Jennifer" },
+      { id: 3, userName: "Ash", password: "password", nickName: "Ashley" },
+      { id: 4, userName: "Deandra", password: "password", nickName: "Dee" },
+      { id: 5, userName: "Charlie", password: "password", nickName: "Charlie" },
+      { id: 6, userName: "Mac", password: "password", nickName: "Mac" },
+      { id: 7, userName: "Demo", password: "password", nickName: "Demo" },
+      {
+        id: 8,
+        userName: "Demo2",
+        password: "password",
+        nickName: "Demo Lovato"
+      },
+      {
+        id: 9,
+        userName: "Demo3",
+        password: "password",
+        nickName: "Demo Moore"
+      },
+      { id: 10, userName: "Demo4", password: "password", nickName: "Demenem" },
+      { id: 11, userName: "Harry", password: "password", nickName: "Harry" },
+      { id: 12, userName: "Ron", password: "password", nickName: "Ron" },
+      {
+        id: 13,
+        userName: "Hermione",
+        password: "password",
+        nickName: "Hermione"
+      }
     ];
   },
 

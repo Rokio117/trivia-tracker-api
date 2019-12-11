@@ -1,8 +1,15 @@
 const store = require("../store");
 const teamService = require("../teams/teams-service");
 const usersService = {
-  userExists(userName) {
-    return store.users.map(user => user.userName).includes(userName);
+  userExists(knex, userName) {
+    //return store.users.map(user => user.userName).includes(userName);
+    const player = knex
+      .select("*")
+      .from("trivia_players")
+      .where("userName", userName);
+    if (player) {
+      return true;
+    } else return false;
   },
   getAllusers(knex) {
     return knex.select("*").from("trivia_players");

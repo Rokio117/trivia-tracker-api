@@ -1,8 +1,7 @@
-function cleanTables(db) {
-  console.log("cleanTables ran");
-  console.log("db in cleanTables", db);
-  db.raw(
-    `TRUNCATE 
+const helpers = {
+  cleanTables(db) {
+    db.raw(
+      `TRUNCATE 
   trivia_attendees,
   trivia_results,
   trivia_events,
@@ -10,50 +9,46 @@ function cleanTables(db) {
   trivia_teams,
   trivia_players
   RESTART IDENTITY CASCADE`
-  );
-}
+    );
+  },
 
-function seedPlayers(db, players) {}
+  seedUsers(db, players) {
+    console.log(players, "players");
+    return db.into("trivia_players").insert(players);
+  },
 
-function seedTeams(db, teams) {}
+  seedTeams(db, teams) {},
 
-function seedMembers(db, members) {}
+  seedMembers(db, members) {},
 
-function seedLocations(db, locations) {}
+  seedLocations(db, locations) {},
 
-function seedEvents(db, events) {}
+  seedEvents(db, events) {},
 
-function seedResults(db, results) {}
+  seedResults(db, results) {},
 
-function seedAttendees(db, attendees) {}
+  seedAttendees(db, attendees) {},
 
-function seedAllTables(
-  db,
-  players,
-  teams,
-  members,
-  locations,
-  events,
-  results,
-  attendees
-) {
-  seedPlayers(db, players);
-  seedTeams(db, teams);
-  seedMembers(db, members);
-  seedLocations(db, locations);
-  seedEvents(db, events);
-  seedResults(db, results);
-  seedAttendees(db, attendees);
-}
+  seedAllTables(
+    db,
+    players,
+    teams,
+    members,
+    locations,
+    events,
+    results,
+    attendees
+  ) {
+    seedPlayers(db, players);
+    seedTeams(db, teams);
+    seedMembers(db, members);
+    seedLocations(db, locations);
+    seedEvents(db, events);
+    seedResults(db, results);
+    seedAttendees(db, attendees);
+  }
+};
 
 module.exports = {
-  cleanTables,
-  seedPlayers,
-  seedTeams,
-  seedMembers,
-  seedLocations,
-  seedEvents,
-  seedResults,
-  seedAttendees,
-  seedAllTables
+  helpers
 };

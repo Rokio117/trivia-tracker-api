@@ -1,6 +1,6 @@
 const knex = require("knex");
 const app = require("../src/app");
-const { cleanTables } = require("./helpers");
+const { helpers } = require("./helpers");
 const { seedData } = require("./seedData");
 require("dotenv").config();
 
@@ -23,15 +23,23 @@ describe.only("Users Endpoints", function() {
   });
 
   after("disconnect from db", () => db.destroy());
-  before("clean the tables", () => cleanTables(db));
-  afterEach("clean up", () => cleanTables(db));
+  before("clean the tables", () => helpers.cleanTables(db));
+  afterEach("clean up", () => helpers.cleanTables(db));
 
-  describe(`Get /api/teams/`, () => {
-    context(`Given no articles`, () => {
+  describe.only(`Get /api/users/`, () => {
+    context(`Given no players`, () => {
       it(`responds with an empty list`, () => {
         return supertest(app)
-          .get(`/api/teams/`)
+          .get(`/api/users/`)
           .expect([]);
+      });
+    });
+    context(`Given players`, () => {
+      beforeEach("insert users", () => helpers.seedUsers(db, users));
+      it(`responds with expected players`, () => {
+        return supertest(app)
+          .get(`/api/users/`)
+          .expect(users);
       });
     });
   });
