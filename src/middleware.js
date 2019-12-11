@@ -4,18 +4,19 @@ function validateBodyTypes(req, res, next) {
   console.log("body validator ran");
   const possibleStringKeys = [
     "name",
-    "teamCode",
-    "newName",
-    "newMember",
-    "userName",
+    "teamcode",
+    "newname",
+    "newmember",
+    "username",
     "role",
     "location",
     "outcome",
     "password",
-    "newUserName",
+    "newusername",
     "position",
     "date",
-    "nickName"
+    "nickname",
+    "nickname"
   ];
   const possibleNumberKeys = [
     "wins",

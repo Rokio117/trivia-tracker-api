@@ -22,7 +22,7 @@ const usersService = {
     return knex
       .select("*")
       .from("trivia_players")
-      .where({ userName: userName });
+      .where({ username: userName });
   },
   getNameFromUserName(userName) {
     return store.users.find(user => user.userName === userName).name;

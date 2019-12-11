@@ -22,25 +22,32 @@ usersRouter
     });
   })
   .post(
-    keyValidator(["userName", "nickName", "password"]),
+    keyValidator(["username", "nickname", "password"]),
     validateDuplicateUser,
     (req, res, next) => {
       const knexInstance = req.app.get("db");
-      const { userName, name, password } = req.body;
+      const { username, nickname, password } = req.body;
       const newUser = {
-        userName: userName,
-        name: name,
+        username: userName,
+        nickname: nickname,
         password: password
       };
-      userService.postNewUserNoTeam(knexInstance, newUser);
-      res.json(userService.getAllusers(knexInstance));
+      userService
+        .postNewUserNoTeam(knexInstance, newUser)
+        .then(response => res.json(response));
+      //res.json(userService.getAllusers(knexInstance));
     }
   );
 
 usersRouter
   .route("/:user_name")
   .get(validateUserExists, (req, res, next) => {
-    res.json(userService.getUser(req.app.get("db"), req.params.user_name));
+    //res.json(userService.getUser(req.app.get("db"), req.params.user_name));
+    userService
+      .getUser(req.app.get("db"), req.params.user_name)
+      .then(result => {
+        res.json(result);
+      });
   })
   .patch(
     keyValidator(["newUserName"]),
@@ -96,7 +103,7 @@ usersRouter.use(serverError);
 function validateUserExists(req, res, next) {
   userService.userExists(req.app.get("db"), req.params.user_name).then(id => {
     console.log(id, "id in validateUserExists");
-    if (id === []) {
+    if (!id.length) {
       let err = new Error("User does not exist");
       err.status = 404;
       return next(err);
@@ -108,15 +115,18 @@ function validateUserExists(req, res, next) {
 function validateDuplicateUser(req, res, next) {
   console.log("validateDuplicateUser ran");
   //req.user = userService.userExists(req.app.get("db"), req.params.user_name);
-  userService
-    .userExists(req.app.get("db"), req.params.user_name)
-    .then(id => console.log(id, "id in validateduplicateuser"));
 
-  // if (req.user) {
-  //   let err = new Error("User name already exists");
-  //   err.status = 400;
-  //   next(err);
-  // }
+  const userName = req.params.user_name
+    ? req.params.user_name
+    : req.body.userName;
+  userService.userExists(req.app.get("db"), userName).then(id => {
+    if (id.length) {
+      let err = new Error("User name already exists");
+      err.status = 400;
+      return next(err);
+    }
+  });
+
   next();
 }
 

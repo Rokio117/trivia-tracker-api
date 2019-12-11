@@ -50,12 +50,12 @@ describe.only("Users Endpoints", function() {
       });
     });
   });
-  describe.only(`POST /api/users`, () => {
+  describe.only(`POST /api/users/`, () => {
     beforeEach("insert users", () => helpers.seedUsers(db, users));
     const newUser = {
       userName: "Hopicoy",
       password: "password",
-      nickName: "hoppers"
+      nickname: "hoppers"
     };
     const expectedUsers = [...users, newUser];
     it(`responds with array of users with new user included`, () => {
