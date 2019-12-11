@@ -1,13 +1,13 @@
 const store = require("../store");
 const teamService = require("../teams/teams-service");
 const usersService = {
-  userExists(knex, userName) {
-    //return store.users.map(user => user.userName).includes(userName);
-    console.log(userName, "username in userExists");
+  userExists(knex, username) {
+    //return store.users.map(user => user.username).includes(username);
+    console.log(username, "username in userExists");
     return knex
       .select("id")
       .from("trivia_players")
-      .where({ username: userName })
+      .where({ username: username })
       .then(result => {
         console.log("result", result);
         return result;
@@ -17,23 +17,23 @@ const usersService = {
     console.log("knex in getAllUsers", knex);
     return knex.select("*").from("trivia_players");
   },
-  getUser(knex, userName) {
-    //return store.users.find(user => user.userName === userName);
+  getUser(knex, username) {
+    //return store.users.find(user => user.username === username);
     return knex
       .select("*")
       .from("trivia_players")
-      .where({ username: userName });
+      .where({ username: username });
   },
-  getNameFromUserName(userName) {
-    return store.users.find(user => user.userName === userName).name;
+  getNameFromUsername(username) {
+    return store.users.find(user => user.username === username).name;
   },
-  getUserTeams(userName) {
+  getUserTeams(username) {
     return store.teams.filter(team =>
-      team.members.map(member => member.userName).includes(userName)
+      team.members.map(member => member.username).includes(username)
     );
   },
-  getUserProfile(userName) {
-    return store.users.find(user => user.userName === userName);
+  getUserProfile(username) {
+    return store.users.find(user => user.username === username);
   },
   postNewUserNoTeam(knex, profile) {
     console.log("knex in postNewUserNOTeam", knex);
@@ -43,34 +43,34 @@ const usersService = {
       .into("trivia_players")
       .returning("*");
   },
-  changeUserName(newUserName, userName) {
-    store.users.find(user => user.userName === userName).userName = newUserName;
+  changeUsername(newUsername, username) {
+    store.users.find(user => user.username === username).username = newUsername;
 
     store.teams
-      .filter(team => team.members.find(member => member.userName === userName))
+      .filter(team => team.members.find(member => member.username === username))
       .forEach(
         team =>
           (team.members.find(
-            member => member.userName === userName
-          ).userName = newUserName)
+            member => member.username === username
+          ).username = newUsername)
       );
 
     store.teams
       .filter(team =>
-        team.members.find(member => member.userName === newUserName)
+        team.members.find(member => member.username === newUsername)
       )
       .forEach(team =>
         team.history.forEach(event => {
-          const index = event.roster.indexOf(userName);
-          event.roster.splice(index, 1, newUserName);
+          const index = event.roster.indexOf(username);
+          event.roster.splice(index, 1, newUsername);
         })
       );
   },
-  changePlayerName(newName, userName) {
-    store.users.find(user => user.userName === userName).name = newName;
+  changePlayerName(newName, username) {
+    store.users.find(user => user.username === username).name = newName;
   },
   postUserWithTeam: (userObject, teamCode) => {
-    const user = { userName: userObject.userName, role: "Member" };
+    const user = { username: userObject.username, role: "Member" };
     store.users.push(userObject);
     store.teams.find(team => team.teamCode === teamCode).members.push(user);
   }

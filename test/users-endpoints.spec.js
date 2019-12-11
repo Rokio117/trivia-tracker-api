@@ -53,7 +53,7 @@ describe.only("Users Endpoints", function() {
   describe.only(`POST /api/users/`, () => {
     beforeEach("insert users", () => helpers.seedUsers(db, users));
     const newUser = {
-      userName: "Hopicoy",
+      username: "Hopicoy",
       password: "password",
       nickname: "hoppers"
     };

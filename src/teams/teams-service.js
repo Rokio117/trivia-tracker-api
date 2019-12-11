@@ -15,19 +15,19 @@ const teamsService = {
   getTeamMembers(teamCode) {
     return store.teams.find(team => team.teamCode === teamCode).members;
   },
-  getRoleOfMember(userName, teamCode) {
-    console.log(userName, teamCode);
+  getRoleOfMember(username, teamCode) {
+    console.log(username, teamCode);
     return store.teams
       .find(team => team.teamCode === teamCode)
-      .members.find(member => member.userName === userName).role;
+      .members.find(member => member.username === username).role;
   },
-  userExists(userName) {
-    return store.users.map(user => user.userName).includes(userName);
+  userExists(username) {
+    return store.users.map(user => user.username).includes(username);
   },
   getNamedMembersOfTeam: members => {
     return members.map(member =>
       Object.assign(member, {
-        name: userService.getNameFromUserName(member.userName)
+        name: userService.getNameFromUsername(member.username)
       })
     );
   },
@@ -36,7 +36,7 @@ const teamsService = {
   },
   addToTeam(player, teamCode, role) {
     const newMember = {
-      userName: player,
+      username: player,
       role: role
     };
     store.teams
@@ -46,7 +46,7 @@ const teamsService = {
   changeRole(player, role, teamCode) {
     store.teams
       .find(team => team.teamCode === teamCode)
-      .members.find(member => member.userName === player).role = role;
+      .members.find(member => member.username === player).role = role;
   },
   changeWinnings: (winnings, teamCode) => {
     store.teams.find(team => team.teamCode === teamCode).winnings = winnings;

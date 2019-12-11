@@ -28,7 +28,7 @@ usersRouter
       const knexInstance = req.app.get("db");
       const { username, nickname, password } = req.body;
       const newUser = {
-        username: userName,
+        username: username,
         nickname: nickname,
         password: password
       };
@@ -50,11 +50,11 @@ usersRouter
       });
   })
   .patch(
-    keyValidator(["newUserName"]),
+    keyValidator(["newUsername"]),
     validateUserExists,
     (req, res, next) => {
-      const { newUserName } = req.body;
-      userService.changeUserName(newUserName, req.params.user_name);
+      const { newUsername } = req.body;
+      userService.changeUsername(newUsername, req.params.user_name);
       res.json(userService.getAllusers());
     }
   );
@@ -62,7 +62,7 @@ usersRouter
 usersRouter
   .route("/:user_name/name")
   .get(validateUserExists, (req, res, next) => {
-    res.json(userService.getNameFromUserName(req.params.user_name));
+    res.json(userService.getNameFromUsername(req.params.user_name));
   })
   .patch(keyValidator(["name"]), validateUserExists, (req, res, next) => {
     userService.changePlayerName(req.body.name, req.params.user_name);
@@ -81,7 +81,7 @@ usersRouter
     (req, res, next) => {
       const { name, password, teamCode } = req.body;
       const newUser = {
-        userName: req.params.user_name,
+        username: req.params.user_name,
         name: name.name,
         password: password.password
       };
@@ -116,10 +116,10 @@ function validateDuplicateUser(req, res, next) {
   console.log("validateDuplicateUser ran");
   //req.user = userService.userExists(req.app.get("db"), req.params.user_name);
 
-  const userName = req.params.user_name
+  const username = req.params.user_name
     ? req.params.user_name
-    : req.body.userName;
-  userService.userExists(req.app.get("db"), userName).then(id => {
+    : req.body.username;
+  userService.userExists(req.app.get("db"), username).then(id => {
     if (id.length) {
       let err = new Error("User name already exists");
       err.status = 400;

@@ -115,10 +115,10 @@ teamsRouter
     validateRole,
     (req, res, next) => {
       const teamCode = req.params.team_code;
-      const userName = req.params.user_name;
+      const username = req.params.user_name;
       const role = req.body.role;
-      teamsService.changeRole(userName, role, teamCode);
-      res.json(teamsService.getRoleOfMember(userName, teamCode));
+      teamsService.changeRole(username, role, teamCode);
+      res.json(teamsService.getRoleOfMember(username, teamCode));
     }
   );
 
