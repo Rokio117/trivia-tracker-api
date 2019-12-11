@@ -1,33 +1,33 @@
 const seedData = {
   users() {
     return [
-      { id: 1, userName: "Rokio", password: "password", nickName: "Nick" },
-      { id: 2, userName: "Jen", password: "password", nickName: "Jennifer" },
-      { id: 3, userName: "Ash", password: "password", nickName: "Ashley" },
-      { id: 4, userName: "Deandra", password: "password", nickName: "Dee" },
-      { id: 5, userName: "Charlie", password: "password", nickName: "Charlie" },
-      { id: 6, userName: "Mac", password: "password", nickName: "Mac" },
-      { id: 7, userName: "Demo", password: "password", nickName: "Demo" },
+      { id: 1, username: "Rokio", password: "password", nickname: "Nick" },
+      { id: 2, username: "Jen", password: "password", nickname: "Jennifer" },
+      { id: 3, username: "Ash", password: "password", nickname: "Ashley" },
+      { id: 4, username: "Deandra", password: "password", nickname: "Dee" },
+      { id: 5, username: "Charlie", password: "password", nickname: "Charlie" },
+      { id: 6, username: "Mac", password: "password", nickname: "Mac" },
+      { id: 7, username: "Demo", password: "password", nickname: "Demo" },
       {
         id: 8,
-        userName: "Demo2",
+        username: "Demo2",
         password: "password",
-        nickName: "Demo Lovato"
+        nickname: "Demo Lovato"
       },
       {
         id: 9,
-        userName: "Demo3",
+        username: "Demo3",
         password: "password",
-        nickName: "Demo Moore"
+        nickname: "Demo Moore"
       },
-      { id: 10, userName: "Demo4", password: "password", nickName: "Demenem" },
-      { id: 11, userName: "Harry", password: "password", nickName: "Harry" },
-      { id: 12, userName: "Ron", password: "password", nickName: "Ron" },
+      { id: 10, username: "Demo4", password: "password", nickname: "Demenem" },
+      { id: 11, username: "Harry", password: "password", nickname: "Harry" },
+      { id: 12, username: "Ron", password: "password", nickname: "Ron" },
       {
         id: 13,
-        userName: "Hermione",
+        username: "Hermione",
         password: "password",
-        nickName: "Hermione"
+        nickname: "Hermione"
       }
     ];
   },

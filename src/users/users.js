@@ -22,25 +22,25 @@ usersRouter
     });
   })
   .post(
-    keyValidator(["userName", "name", "password"]),
+    keyValidator(["userName", "nickName", "password"]),
     validateDuplicateUser,
     (req, res, next) => {
-      console.log(req.body);
+      const knexInstance = req.app.get("db");
       const { userName, name, password } = req.body;
       const newUser = {
         userName: userName,
         name: name,
         password: password
       };
-      userService.postNewUserNoTeam(newUser);
-      res.json(userService.getAllusers());
+      userService.postNewUserNoTeam(knexInstance, newUser);
+      res.json(userService.getAllusers(knexInstance));
     }
   );
 
 usersRouter
   .route("/:user_name")
   .get(validateUserExists, (req, res, next) => {
-    res.json(userService.getUser(req.params.user_name));
+    res.json(userService.getUser(req.app.get("db"), req.params.user_name));
   })
   .patch(
     keyValidator(["newUserName"]),
@@ -94,22 +94,29 @@ usersRouter
 usersRouter.use(serverError);
 
 function validateUserExists(req, res, next) {
-  req.user = userService.userExists(req.params.user_name);
-  if (!req.user) {
-    let err = new Error("User does not exist");
-    err.status = 404;
-    next(err);
-  }
-  next();
+  userService.userExists(req.app.get("db"), req.params.user_name).then(id => {
+    console.log(id, "id in validateUserExists");
+    if (id === []) {
+      let err = new Error("User does not exist");
+      err.status = 404;
+      return next(err);
+    }
+    next();
+  });
 }
 
 function validateDuplicateUser(req, res, next) {
-  req.user = userService.userExists(req.params.user_name);
-  if (req.user) {
-    let err = new Error("User name already exists");
-    err.status = 400;
-    next(err);
-  }
+  console.log("validateDuplicateUser ran");
+  //req.user = userService.userExists(req.app.get("db"), req.params.user_name);
+  userService
+    .userExists(req.app.get("db"), req.params.user_name)
+    .then(id => console.log(id, "id in validateduplicateuser"));
+
+  // if (req.user) {
+  //   let err = new Error("User name already exists");
+  //   err.status = 400;
+  //   next(err);
+  // }
   next();
 }
 

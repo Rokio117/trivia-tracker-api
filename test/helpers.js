@@ -1,19 +1,5 @@
 const helpers = {
-  cleanTables(db) {
-    db.raw(
-      `TRUNCATE 
-  trivia_attendees,
-  trivia_results,
-  trivia_events,
-  members,
-  trivia_teams,
-  trivia_players
-  RESTART IDENTITY CASCADE`
-    );
-  },
-
   seedUsers(db, players) {
-    console.log(players, "players");
     return db.into("trivia_players").insert(players);
   },
 
@@ -49,6 +35,20 @@ const helpers = {
   }
 };
 
+function cleanTables(db) {
+  return db.raw(
+    `TRUNCATE 
+  trivia_attendees,
+  trivia_results,
+  trivia_events,
+  members,
+  trivia_teams,
+  trivia_players
+  RESTART IDENTITY CASCADE`
+  );
+}
+
 module.exports = {
-  helpers
+  helpers,
+  cleanTables
 };

@@ -14,14 +14,16 @@ function validateBodyTypes(req, res, next) {
     "password",
     "newUserName",
     "position",
-    "date"
+    "date",
+    "nickName"
   ];
   const possibleNumberKeys = [
     "wins",
     "firstPlace",
     "secondPlace",
     "thirdPlace",
-    "winnings"
+    "winnings",
+    "id"
   ];
   const possibleArrayKeys = ["history", "roster", "members"];
   const allPossibleKeys = [
