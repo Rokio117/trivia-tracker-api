@@ -34,7 +34,7 @@ const usersService = {
       .from("trivia_players")
       .where({ username: username })
       .then(id => {
-        return knex
+        knex
           .select("team_id")
           .from("members")
           .where({ player_id: id[0].id })
@@ -48,18 +48,11 @@ const usersService = {
                 .where({ id: teamId })
                 .then(result => {
                   //console.log(result[0], "result of big query");
-                  return teamList.push(result[0]);
-                })
-                .then(() => {
-                  //console.log(teamList, "teamlist after push");
-                  return teamList;
+                  teamList.push(result[0]);
                 });
             });
           });
-        // .then(() => {
-        //   console.log(teamList, "teamlist");
-        //   return "Aha";
-        // });
+        return teamList;
       });
   },
   getUserProfile(username) {
