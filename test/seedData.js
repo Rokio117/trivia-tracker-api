@@ -34,7 +34,7 @@ const seedData = {
       {
         id: 1,
         teamname: "Well Win Again Someday",
-        password: "password",
+        teamcode: "password",
         wins: 6,
         firstplace: 3,
         secondplace: 2,
@@ -44,7 +44,7 @@ const seedData = {
       {
         id: 2,
         teamname: "Paddys Pub",
-        password: "password2",
+        teamcode: "password2",
         wins: 600,
         firstplace: 300,
         secondplace: 200,
@@ -54,7 +54,7 @@ const seedData = {
       {
         id: 3,
         teamname: "Demo Team",
-        password: "Demo",
+        teamcode: "Demo",
         wins: 6,
         firstplace: 1,
         secondplace: 2,
@@ -64,7 +64,7 @@ const seedData = {
       {
         id: 4,
         teamname: "Dumbledors Army",
-        password: "Potter",
+        teamcode: "Potter",
         wins: 2,
         firstplace: 0,
         secondplace: 0,
@@ -76,20 +76,20 @@ const seedData = {
 
   members() {
     return [
-      { id: 1, playerid: 1, team_id: 1 },
-      { id: 2, playerid: 2, team_id: 1 },
-      { id: 3, playerid: 3, team_id: 1 },
-      { id: 4, playerid: 1, team_id: 2 },
-      { id: 5, playerid: 4, team_id: 2 },
-      { id: 6, playerid: 6, team_id: 2 },
-      { id: 7, playerid: 5, team_id: 2 },
-      { id: 8, playerid: 7, team_id: 3 },
-      { id: 9, playerid: 8, team_id: 3 },
-      { id: 10, playerid: 9, team_id: 3 },
-      { id: 11, playerid: 10, team_id: 3 },
-      { id: 12, playerid: 11, team_id: 4 },
-      { id: 13, playerid: 12, team_id: 4 },
-      { id: 14, playerid: 13, team_id: 4 }
+      { id: 1, player_id: 1, team_id: 1 },
+      { id: 2, player_id: 2, team_id: 1 },
+      { id: 3, player_id: 3, team_id: 1 },
+      { id: 4, player_id: 1, team_id: 2 },
+      { id: 5, player_id: 4, team_id: 2 },
+      { id: 6, player_id: 6, team_id: 2 },
+      { id: 7, player_id: 5, team_id: 2 },
+      { id: 8, player_id: 7, team_id: 3 },
+      { id: 9, player_id: 8, team_id: 3 },
+      { id: 10, player_id: 9, team_id: 3 },
+      { id: 11, player_id: 10, team_id: 3 },
+      { id: 12, player_id: 11, team_id: 4 },
+      { id: 13, player_id: 12, team_id: 4 },
+      { id: 14, player_id: 13, team_id: 4 }
     ];
   },
 
@@ -286,6 +286,38 @@ const seedData = {
       { id: 43, team_id: 4, event_id: 12, player_id: 11 },
       { id: 44, team_id: 4, event_id: 12, player_id: 12 },
       { id: 45, team_id: 4, event_id: 12, player_id: 13 }
+    ];
+  },
+  usersWithId() {
+    return [
+      { id: 1, username: "Rokio", password: "password", nickname: "Nick" },
+      { id: 2, username: "Jen", password: "password", nickname: "Jennifer" },
+      { id: 3, username: "Ash", password: "password", nickname: "Ashley" },
+      { id: 4, username: "Deandra", password: "password", nickname: "Dee" },
+      { id: 5, username: "Charlie", password: "password", nickname: "Charlie" },
+      { id: 6, username: "Mac", password: "password", nickname: "Mac" },
+      { id: 7, username: "Demo", password: "password", nickname: "Demo" },
+      {
+        id: 8,
+        username: "Demo2",
+        password: "password",
+        nickname: "Demo Lovato"
+      },
+      {
+        id: 9,
+        username: "Demo3",
+        password: "password",
+        nickname: "Demo Moore"
+      },
+      { id: 10, username: "Demo4", password: "password", nickname: "Demenem" },
+      { id: 11, username: "Harry", password: "password", nickname: "Harry" },
+      { id: 12, username: "Ron", password: "password", nickname: "Ron" },
+      {
+        id: 13,
+        username: "Hermione",
+        password: "password",
+        nickname: "Hermione"
+      }
     ];
   }
 };

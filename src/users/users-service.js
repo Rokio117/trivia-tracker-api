@@ -24,36 +24,25 @@ const usersService = {
       .from("trivia_players")
       .where({ username: username });
   },
-  getNameFromUsername(username) {
-    return store.users.find(user => user.username === username).name;
-  },
-  getUserTeams(knex, username) {
-    let teamList = [];
+  getUserId(knex, username) {
     return knex
       .select("id")
       .from("trivia_players")
-      .where({ username: username })
-      .then(id => {
-        knex
-          .select("team_id")
-          .from("members")
-          .where({ player_id: id[0].id })
-          .then(team_id => {
-            team_id.forEach(id => {
-              let teamId = id.team_id;
-              //console.log("teamId in getUserTeams", teamId);
-              return knex
-                .select("*")
-                .from("trivia_teams")
-                .where({ id: teamId })
-                .then(result => {
-                  //console.log(result[0], "result of big query");
-                  teamList.push(result[0]);
-                });
-            });
-          });
-        return teamList;
-      });
+      .where({ username: username });
+  },
+
+  getNameFromUsername(username) {
+    return store.users.find(user => user.username === username).name;
+  },
+  getUserTeams(knex, userid) {
+    return knex
+      .select("team_id")
+      .from("members")
+      .where({ player_id: userid });
+  },
+  getTeamInfo(knex, teamIds) {
+    const ids = teamIds.map(teamId => teamId.team_id);
+    return knex("trivia_teams").whereIn("id", ids);
   },
   getUserProfile(username) {
     return store.users.find(user => user.username === username);
@@ -102,10 +91,11 @@ const usersService = {
   changePlayerName(newName, username) {
     store.users.find(user => user.username === username).name = newName;
   },
-  postUserWithTeam: (userObject, teamCode) => {
-    const user = { username: userObject.username, role: "Member" };
-    store.users.push(userObject);
-    store.teams.find(team => team.teamCode === teamCode).members.push(user);
+  postUserWithTeam: (knex, userObject, teamcode) => {
+    console.log(userObject, teamcode);
+    // const user = { username: userObject.username, role: "Member" };
+    // store.users.push(userObject);
+    // store.teams.find(team => team.teamcode === teamcode).members.push(user);
   }
 };
 

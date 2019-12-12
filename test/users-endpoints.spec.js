@@ -14,11 +14,17 @@ describe.only("Users Endpoints", function() {
   const events = seedData.events();
   const results = seedData.results();
   const attendees = seedData.attendees();
+  const expectedUsers = seedData.usersWithId();
 
   const testUser = {
     username: "Rokio",
     nickname: "Nick",
     password: "password"
+  };
+  const newUser = {
+    username: "Bubba",
+    password: "password",
+    nickname: "hoppers"
   };
   before("make knex instance", () => {
     console.log(process.env.TEST_DB_URL);
@@ -52,17 +58,13 @@ describe.only("Users Endpoints", function() {
       it(`responds with expected players`, () => {
         return supertest(app)
           .get(`/api/users/`)
-          .expect(users);
+          .expect(expectedUsers);
       });
     });
   });
   describe(`POST /api/users/`, () => {
     beforeEach("insert users", () => helpers.seedUsers(db, users));
-    const newUser = {
-      username: "Bubba",
-      password: "password",
-      nickname: "hoppers"
-    };
+
     const newUserWithId = [
       {
         id: 14,
@@ -83,13 +85,6 @@ describe.only("Users Endpoints", function() {
     const user = {
       id: 1,
       username: "Rokio",
-      password: "password",
-      nickname: "Nick"
-    };
-    const newusername = "newusername";
-    const newUserObject = {
-      id: 1,
-      username: "newusername",
       password: "password",
       nickname: "Nick"
     };
@@ -121,38 +116,67 @@ describe.only("Users Endpoints", function() {
         .expect([newUserObject]);
     });
   });
-  describe.only(`GET /api/users/:user_name/teams`);
-  before("insert players and teams", () => {
-    helpers.seedUsers(db, users);
-    helpers.seedTeams(db, teams);
-    helpsers.seedMembers(db, members);
-  });
+  describe(`GET /api/users/:user_name/teams`, () => {
+    console.log(testUser.username);
+    beforeEach("insert players and teams", () => {
+      return helpers.seedUsers(db, users);
+    });
+    beforeEach("insert players and teams", () => {
+      return helpers.seedTeams(db, teams);
+    });
+    beforeEach("insert players and teams", () => {
+      return helpers.seedMembers(db, members);
+    });
 
-  const userTeams = [
-    {
-      id: 1,
-      teamname: "Well Win Again Someday",
-      password: "password",
-      wins: 6,
-      firstplace: 3,
-      secondplace: 2,
-      thirdplace: 1,
-      winnings: 395
-    },
-    {
-      id: 2,
-      teamname: "Paddys Pub",
-      password: "password2",
-      wins: 600,
-      firstplace: 300,
-      secondplace: 200,
-      thirdplace: 100,
-      winnings: 1000
-    }
-  ];
-  it("responds with teams for user", () => {
-    return supertest(app)
-      .get(`/api/users/${testUser.username}`)
-      .expect(userTeams);
+    const userTeams = [
+      {
+        id: 1,
+        teamcode: "password",
+        teamname: "Well Win Again Someday",
+        wins: 6,
+        firstplace: 3,
+        secondplace: 2,
+        thirdplace: 1,
+        winnings: 395
+      },
+      {
+        id: 2,
+        teamcode: "password2",
+        teamname: "Paddys Pub",
+        wins: 600,
+        firstplace: 300,
+        secondplace: 200,
+        thirdplace: 100,
+        winnings: 1000
+      }
+    ];
+    it("responds with teams for user", () => {
+      return supertest(app)
+        .get(`/api/users/${testUser.username}/teams`)
+        .expect(userTeams);
+    });
+  });
+  describe(`POST /api/users/:user_name/teams`, () => {
+    beforeEach("insert players and teams", () => {
+      return helpers.seedUsers(db, users);
+    });
+    beforeEach("insert players and teams", () => {
+      return helpers.seedTeams(db, teams);
+    });
+    beforeEach("insert players and teams", () => {
+      return helpers.seedMembers(db, members);
+    });
+    const body = {
+      teamcode: password,
+      nickname: newUser.nickname,
+      password: newUser.password
+    };
+
+    it("responds with users teams", () => {
+      return supertest(app)
+        .post(`/api/users/${newuser.username}/teams`)
+        .send(body)
+        .expect(teams[0]);
+    });
   });
 });

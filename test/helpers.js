@@ -1,13 +1,16 @@
 const helpers = {
   seedUsers(db, players) {
+    console.log("seedUsers Ran");
     return db.into("trivia_players").insert(players);
   },
 
   seedTeams(db, teams) {
+    console.log("seedTeams ran");
     return db.into("trivia_teams").insert(teams);
   },
 
   seedMembers(db, members) {
+    console.log("seedmembers ran");
     return db.into("members").insert(members);
   },
 

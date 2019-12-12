@@ -75,27 +75,33 @@ usersRouter
 usersRouter
   .route("/:user_name/teams")
   .get(validateUserExists, (req, res, next) => {
-    userService
-      .getUserTeams(req.app.get("db"), req.params.user_name)
-      .then(response => {
-        console.log(response);
-        res.json(response);
+    userService.getUserId(req.app.get("db"), req.params.user_name).then(id => {
+      userService.getUserTeams(req.app.get("db"), id[0].id).then(teamIds => {
+        userService.getTeamInfo(req.app.get("db"), teamIds).then(result => {
+          res.json(result);
+        });
       });
+    });
   })
   .post(
-    keyValidator(["name", "password", "teamCode"]),
+    keyValidator(["nickname", "password", "teamcode"]),
     validateDuplicateUser,
     validateTeamExists,
     (req, res, next) => {
-      const { name, password, teamCode } = req.body;
+      const { nickname, password, teamcode } = req.body;
+      console.log(nickname, password, teamcode, "body in .post");
       const newUser = {
         username: req.params.user_name,
-        name: name.name,
+        nickname: nickname.nickname,
         password: password.password
       };
 
       //validate team exists
-      userService.postUserWithTeam(newUser, teamCode);
+      userService.postUserWithTeam(
+        req.app.get("db"),
+        newUser,
+        teamcode.teamcode
+      );
       res.json(userService.getUserTeams(req.params.user_name));
     }
   );
@@ -109,6 +115,10 @@ usersRouter
 usersRouter.use(serverError);
 
 function validateUserExists(req, res, next) {
+  console.log(
+    req.params.user_name,
+    "req.params.user_name in validateUserExists"
+  );
   userService.userExists(req.app.get("db"), req.params.user_name).then(id => {
     console.log(id, "id in validateUserExists");
     if (!id.length) {
