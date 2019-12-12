@@ -89,7 +89,6 @@ usersRouter
     validateTeamExists,
     (req, res, next) => {
       const { nickname, password, teamcode } = req.body;
-      console.log(nickname, password, teamcode, "body in .post");
       const newUser = {
         username: req.params.user_name,
         nickname: nickname.nickname,

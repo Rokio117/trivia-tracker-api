@@ -1,7 +1,6 @@
 const teamsService = require("../src/teams/teams-service");
-
+const express = require("express");
 function validateBodyTypes(req, res, next) {
-  console.log("body validator ran");
   const possibleStringKeys = [
     "name",
     "teamcode",
@@ -70,7 +69,6 @@ function validateBodyTypes(req, res, next) {
 
 function keyValidator(requiredKeys = []) {
   return function(req, res, next) {
-    console.log("keyvalidator ran");
     //requiredKeys = req.requiredKeys;
     const keys = Object.keys(req.body) ? Object.keys(req.body) : [];
     requiredKeys.forEach(key => {
@@ -116,11 +114,14 @@ function validateUserExists(req, res, next) {
 }
 function validateTeamExists(req, res, next) {
   const team = req.params.team_code ? req.params.team_code : req.body.teamcode;
-  if (teamsService.doesExist(req.app.get("db"), team).length) {
+
+  teamsService.doesExist(req.app.get("db"), team).then(id => {
+    if (!id.length) {
+    }
     let err = new Error("Team Does Not Exist");
     err.status = 404;
-    next(err);
-  }
+    return next(err);
+  });
 
   next();
 }
