@@ -117,10 +117,10 @@ function validateTeamExists(req, res, next) {
 
   teamsService.doesExist(req.app.get("db"), team).then(id => {
     if (!id.length) {
+      let err = new Error("Team Does Not Exist");
+      err.status = 404;
+      return next(err);
     }
-    let err = new Error("Team Does Not Exist");
-    err.status = 404;
-    return next(err);
   });
 
   next();
