@@ -1,30 +1,27 @@
 const seedData = {
   users() {
     return [
-      { id: 1, username: "Rokio", password: "password", nickname: "Nick" },
-      { id: 2, username: "Jen", password: "password", nickname: "Jennifer" },
-      { id: 3, username: "Ash", password: "password", nickname: "Ashley" },
-      { id: 4, username: "Deandra", password: "password", nickname: "Dee" },
-      { id: 5, username: "Charlie", password: "password", nickname: "Charlie" },
-      { id: 6, username: "Mac", password: "password", nickname: "Mac" },
-      { id: 7, username: "Demo", password: "password", nickname: "Demo" },
+      { username: "Rokio", password: "password", nickname: "Nick" },
+      { username: "Jen", password: "password", nickname: "Jennifer" },
+      { username: "Ash", password: "password", nickname: "Ashley" },
+      { username: "Deandra", password: "password", nickname: "Dee" },
+      { username: "Charlie", password: "password", nickname: "Charlie" },
+      { username: "Mac", password: "password", nickname: "Mac" },
+      { username: "Demo", password: "password", nickname: "Demo" },
       {
-        id: 8,
         username: "Demo2",
         password: "password",
         nickname: "Demo Lovato"
       },
       {
-        id: 9,
         username: "Demo3",
         password: "password",
         nickname: "Demo Moore"
       },
-      { id: 10, username: "Demo4", password: "password", nickname: "Demenem" },
-      { id: 11, username: "Harry", password: "password", nickname: "Harry" },
-      { id: 12, username: "Ron", password: "password", nickname: "Ron" },
+      { username: "Demo4", password: "password", nickname: "Demenem" },
+      { username: "Harry", password: "password", nickname: "Harry" },
+      { username: "Ron", password: "password", nickname: "Ron" },
       {
-        id: 13,
         username: "Hermione",
         password: "password",
         nickname: "Hermione"
@@ -36,42 +33,42 @@ const seedData = {
     return [
       {
         id: 1,
-        teamName: "Well Win Again Someday",
+        teamname: "Well Win Again Someday",
         password: "password",
         wins: 6,
-        firstPlace: 3,
-        secondPlace: 2,
-        thirdPlace: 1,
+        firstplace: 3,
+        secondplace: 2,
+        thirdplace: 1,
         winnings: 395
       },
       {
         id: 2,
-        teamName: "Paddys Pub",
+        teamname: "Paddys Pub",
         password: "password2",
         wins: 600,
-        firstPlace: 300,
-        secondPlace: 200,
-        thirdPlace: 100,
+        firstplace: 300,
+        secondplace: 200,
+        thirdplace: 100,
         winnings: 1000
       },
       {
         id: 3,
-        teamName: "Demo Team",
+        teamname: "Demo Team",
         password: "Demo",
         wins: 6,
-        firstPlace: 1,
-        secondPlace: 2,
-        thirdPlace: 3,
+        firstplace: 1,
+        secondplace: 2,
+        thirdplace: 3,
         winnings: 100
       },
       {
         id: 4,
-        teamName: "Dumbledors Army",
+        teamname: "Dumbledors Army",
         password: "Potter",
         wins: 2,
-        firstPlace: 0,
-        secondPlace: 0,
-        thirdPlace: 2,
+        firstplace: 0,
+        secondplace: 0,
+        thirdplace: 2,
         winnings: 2
       }
     ];

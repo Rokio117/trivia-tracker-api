@@ -50,12 +50,15 @@ usersRouter
       });
   })
   .patch(
-    keyValidator(["newUsername"]),
+    keyValidator(["newusername"]),
     validateUserExists,
     (req, res, next) => {
-      const { newUsername } = req.body;
-      userService.changeUsername(newUsername, req.params.user_name);
-      res.json(userService.getAllusers());
+      const newusername = req.body.newusername;
+      userService
+        .changeUsername(req.app.get("db"), req.params.user_name, newusername)
+        .then(response => {
+          res.json(response);
+        });
     }
   );
 

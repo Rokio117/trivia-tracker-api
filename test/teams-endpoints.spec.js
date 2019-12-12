@@ -26,7 +26,7 @@ describe.only("Users Endpoints", function() {
   before("clean the tables", () => cleanTables(db));
   afterEach("clean up", () => cleanTables(db));
 
-  describe(`Get /api/teams/`, () => {
+  describe.skip(`Get /api/teams/`, () => {
     context(`Given no articles`, () => {
       it(`responds with an empty list`, () => {
         return supertest(app)

@@ -27,44 +27,44 @@ teamsRouter
     validateTeamNoExists,
     keyValidator([
       "name",
-      "teamCode",
+      "teamcode",
       "members",
       "wins",
-      "firstPlace",
-      "secondPlace",
-      "thirdPlace",
+      "firstplace",
+      "secondplace",
+      "thirdplace",
       "winnings",
       "history"
     ]),
     (req, res, next) => {
       const {
         name,
-        teamCode,
+        teamcode,
         members,
         wins,
-        firstPlace,
-        secondPlace,
-        thirdPlace,
+        firstplace,
+        secondplace,
+        thirdplace,
         winnings,
         history
       } = req.body;
-      const newTeam = {
+      const newteam = {
         name: name,
-        teamCode: teamCode,
+        teamcode: teamcode,
         members: members,
         wins: wins,
-        firstPlace: firstPlace,
-        secondPlace: secondPlace,
-        thirdPlace: thirdPlace,
+        firstplace: firstplace,
+        secondplace: secondplace,
+        thirdplace: thirdplace,
         winnings: winnings,
         history: history
       };
-      teamsService.postNewTeam(newTeam);
-      res.json(teamsService.getTeam(teamCode));
+      teamsService.postt(newteam);
+      res.json(teamsService.getTeam(teamcode));
     }
   );
-//teamsRouter.route("/:team_code/*").get(validateTeamCode);
-//teamsRouter.route("/:team_code/*").all(validateTeamCode);
+//teamsRouter.route("/:team_code/*").get(validateTeamcode);
+//teamsRouter.route("/:team_code/*").all(validateTeamcode);
 teamsRouter
   .route("/:team_code/team")
   .get(validateTeamExists, (req, res, next) => {
@@ -73,12 +73,12 @@ teamsRouter
   .patch(
     validateTeamExists,
 
-    keyValidator(["newName"]),
+    keyValidator(["newname"]),
     (req, res, next) => {
-      const teamCode = req.params.team_code;
-      const newName = req.body.newName;
-      teamsService.changeTeamName(newName, teamCode);
-      return res.json(teamsService.getTeam(teamCode));
+      const teamcode = req.params.team_code;
+      const newname = req.body.newname;
+      teamsService.changeTeamName(newname, teamcode);
+      return res.json(teamsService.getTeam(teamcode));
     }
   );
 
@@ -114,11 +114,11 @@ teamsRouter
     keyValidator(["role"]),
     validateRole,
     (req, res, next) => {
-      const teamCode = req.params.team_code;
+      const teamcode = req.params.team_code;
       const username = req.params.user_name;
       const role = req.body.role;
-      teamsService.changeRole(username, role, teamCode);
-      res.json(teamsService.getRoleOfMember(username, teamCode));
+      teamsService.changeRole(username, role, teamcode);
+      res.json(teamsService.getRoleOfMember(username, teamcode));
     }
   );
 
@@ -169,7 +169,7 @@ teamsRouter.route("/:team_code/event").post(
 );
 
 function validateTeamNoExists(req, res, next) {
-  const exists = teamsService.doesExist(req.body.teamCode);
+  const exists = teamsService.doesExist(req.body.teamcode);
   if (exists) {
     let err = new Error("Team code is taken");
     err.status = 400;

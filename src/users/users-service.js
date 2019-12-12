@@ -41,30 +41,40 @@ const usersService = {
     return knex
       .insert(profile)
       .into("trivia_players")
-      .returning("*");
+      .returning("*")
+      .then(result => {
+        return result;
+      });
   },
-  changeUsername(newUsername, username) {
-    store.users.find(user => user.username === username).username = newUsername;
+  changeUsername(knex, username, newusername) {
+    return knex("trivia_players")
+      .where({ username })
+      .update({ username: newusername })
+      .then(() => {
+        return knex("trivia_players").where({ username: newusername });
+      });
 
-    store.teams
-      .filter(team => team.members.find(member => member.username === username))
-      .forEach(
-        team =>
-          (team.members.find(
-            member => member.username === username
-          ).username = newUsername)
-      );
+    // store.users.find(user => user.username === username).username = newUsername;
 
-    store.teams
-      .filter(team =>
-        team.members.find(member => member.username === newUsername)
-      )
-      .forEach(team =>
-        team.history.forEach(event => {
-          const index = event.roster.indexOf(username);
-          event.roster.splice(index, 1, newUsername);
-        })
-      );
+    // store.teams
+    //   .filter(team => team.members.find(member => member.username === username))
+    //   .forEach(
+    //     team =>
+    //       (team.members.find(
+    //         member => member.username === username
+    //       ).username = newUsername)
+    //   );
+
+    // store.teams
+    //   .filter(team =>
+    //     team.members.find(member => member.username === newUsername)
+    //   )
+    //   .forEach(team =>
+    //     team.history.forEach(event => {
+    //       const index = event.roster.indexOf(username);
+    //       event.roster.splice(index, 1, newUsername);
+    //     })
+    //   );
   },
   changePlayerName(newName, username) {
     store.users.find(user => user.username === username).name = newName;
