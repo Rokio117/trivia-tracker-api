@@ -14,6 +14,12 @@ describe.only("Users Endpoints", function() {
   const events = seedData.events();
   const results = seedData.results();
   const attendees = seedData.attendees();
+
+  const testUser = {
+    username: "Rokio",
+    nickname: "Nick",
+    password: "password"
+  };
   before("make knex instance", () => {
     console.log(process.env.TEST_DB_URL);
     db = knex({
@@ -119,5 +125,34 @@ describe.only("Users Endpoints", function() {
   before("insert players and teams", () => {
     helpers.seedUsers(db, users);
     helpers.seedTeams(db, teams);
+    helpsers.seedMembers(db, members);
+  });
+
+  const userTeams = [
+    {
+      id: 1,
+      teamname: "Well Win Again Someday",
+      password: "password",
+      wins: 6,
+      firstplace: 3,
+      secondplace: 2,
+      thirdplace: 1,
+      winnings: 395
+    },
+    {
+      id: 2,
+      teamname: "Paddys Pub",
+      password: "password2",
+      wins: 600,
+      firstplace: 300,
+      secondplace: 200,
+      thirdplace: 100,
+      winnings: 1000
+    }
+  ];
+  it("responds with teams for user", () => {
+    return supertest(app)
+      .get(`/api/users/${testUser.username}`)
+      .expect(userTeams);
   });
 });

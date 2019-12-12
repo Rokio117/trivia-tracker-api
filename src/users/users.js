@@ -67,7 +67,7 @@ usersRouter
   .get(validateUserExists, (req, res, next) => {
     res.json(userService.getNameFromUsername(req.params.user_name));
   })
-  .patch(keyValidator(["name"]), validateUserExists, (req, res, next) => {
+  .patch(keyValidator(["nickname"]), validateUserExists, (req, res, next) => {
     userService.changePlayerName(req.body.name, req.params.user_name);
     res.json(userService.getUser(req.params.user_name));
   });
@@ -75,7 +75,12 @@ usersRouter
 usersRouter
   .route("/:user_name/teams")
   .get(validateUserExists, (req, res, next) => {
-    res.json(userService.getUserTeams(req.params.user_name));
+    userService
+      .getUserTeams(req.app.get("db"), req.params.user_name)
+      .then(response => {
+        console.log(response);
+        res.json(response);
+      });
   })
   .post(
     keyValidator(["name", "password", "teamCode"]),

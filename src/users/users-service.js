@@ -27,10 +27,40 @@ const usersService = {
   getNameFromUsername(username) {
     return store.users.find(user => user.username === username).name;
   },
-  getUserTeams(username) {
-    return store.teams.filter(team =>
-      team.members.map(member => member.username).includes(username)
-    );
+  getUserTeams(knex, username) {
+    let teamList = [];
+    return knex
+      .select("id")
+      .from("trivia_players")
+      .where({ username: username })
+      .then(id => {
+        return knex
+          .select("team_id")
+          .from("members")
+          .where({ player_id: id[0].id })
+          .then(team_id => {
+            team_id.forEach(id => {
+              let teamId = id.team_id;
+              //console.log("teamId in getUserTeams", teamId);
+              return knex
+                .select("*")
+                .from("trivia_teams")
+                .where({ id: teamId })
+                .then(result => {
+                  //console.log(result[0], "result of big query");
+                  return teamList.push(result[0]);
+                })
+                .then(() => {
+                  //console.log(teamList, "teamlist after push");
+                  return teamList;
+                });
+            });
+          });
+        // .then(() => {
+        //   console.log(teamList, "teamlist");
+        //   return "Aha";
+        // });
+      });
   },
   getUserProfile(username) {
     return store.users.find(user => user.username === username);

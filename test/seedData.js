@@ -76,20 +76,20 @@ const seedData = {
 
   members() {
     return [
-      { id: 1, playerId: 1, team_id: 1 },
-      { id: 2, playerId: 2, team_id: 1 },
-      { id: 3, playerId: 3, team_id: 1 },
-      { id: 4, playerId: 1, team_id: 2 },
-      { id: 5, playerId: 4, team_id: 2 },
-      { id: 6, playerId: 6, team_id: 2 },
-      { id: 7, playerId: 5, team_id: 2 },
-      { id: 8, playerId: 7, team_id: 3 },
-      { id: 9, playerId: 8, team_id: 3 },
-      { id: 10, playerId: 9, team_id: 3 },
-      { id: 11, playerId: 10, team_id: 3 },
-      { id: 12, playerId: 11, team_id: 4 },
-      { id: 13, playerId: 12, team_id: 4 },
-      { id: 14, playerId: 13, team_id: 4 }
+      { id: 1, playerid: 1, team_id: 1 },
+      { id: 2, playerid: 2, team_id: 1 },
+      { id: 3, playerid: 3, team_id: 1 },
+      { id: 4, playerid: 1, team_id: 2 },
+      { id: 5, playerid: 4, team_id: 2 },
+      { id: 6, playerid: 6, team_id: 2 },
+      { id: 7, playerid: 5, team_id: 2 },
+      { id: 8, playerid: 7, team_id: 3 },
+      { id: 9, playerid: 8, team_id: 3 },
+      { id: 10, playerid: 9, team_id: 3 },
+      { id: 11, playerid: 10, team_id: 3 },
+      { id: 12, playerid: 11, team_id: 4 },
+      { id: 13, playerid: 12, team_id: 4 },
+      { id: 14, playerid: 13, team_id: 4 }
     ];
   },
 

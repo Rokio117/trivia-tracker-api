@@ -7,7 +7,9 @@ const helpers = {
     return db.into("trivia_teams").insert(teams);
   },
 
-  seedMembers(db, members) {},
+  seedMembers(db, members) {
+    return db.into("members").insert(members);
+  },
 
   seedLocations(db, locations) {},
 
