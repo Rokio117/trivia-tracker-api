@@ -114,13 +114,15 @@ function validateUserExists(req, res, next) {
 }
 function validateTeamExists(req, res, next) {
   const team = req.params.team_code ? req.params.team_code : req.body.teamcode;
-
-  teamsService.doesExist(req.app.get("db"), team).then(id => {
+  //console.log(team, "team in validateTeamExists");
+  const knexinstance = req.app.get("db");
+  teamsService.doesExist(knexinstance, team).then(id => {
     if (!id.length) {
       let err = new Error("Team Does Not Exist");
       err.status = 404;
       return next(err);
     }
+    return next();
   });
 
   next();

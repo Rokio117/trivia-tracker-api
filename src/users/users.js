@@ -33,7 +33,7 @@ usersRouter
         password: password
       };
       userService
-        .postNewUserNoTeam(knexInstance, newUser)
+        .postNewUser(knexInstance, newUser)
         .then(response => res.json(response));
       //res.json(userService.getAllusers(knexInstance));
     }
@@ -91,16 +91,13 @@ usersRouter
       const { nickname, password, teamcode } = req.body;
       const newUser = {
         username: req.params.user_name,
-        nickname: nickname.nickname,
-        password: password.password
+        nickname: nickname,
+        password: password
       };
 
       //validate team exists
-      userService.postUserWithTeam(
-        req.app.get("db"),
-        newUser,
-        teamcode.teamcode
-      );
+      userService.postNewUser(req.app.get("db"), newUser, teamcode.teamcode);
+      userService.getUserId(req.app.get("db"));
       res.json(userService.getUserTeams(req.params.user_name));
     }
   );
@@ -137,13 +134,17 @@ function validateDuplicateUser(req, res, next) {
     ? req.params.user_name
     : req.body.username;
   userService.userExists(req.app.get("db"), username).then(id => {
+    //console.log(id, "id in validate duplicate");
     if (id.length) {
+      console.log("went error path");
       let err = new Error("User name already exists");
       err.status = 400;
       return next(err);
     }
+    //console.log("went middle path");
+    next();
   });
-
+  //console.log("went bottom path");
   next();
 }
 

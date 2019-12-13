@@ -3,18 +3,14 @@ const teamService = require("../teams/teams-service");
 const usersService = {
   userExists(knex, username) {
     //return store.users.map(user => user.username).includes(username);
-    console.log(username, "username in userExists");
+    //console.log(username, "username in userExists");
     return knex
       .select("id")
       .from("trivia_players")
-      .where({ username: username })
-      .then(result => {
-        console.log("result", result);
-        return result;
-      });
+      .where({ username: username });
   },
   getAllusers(knex) {
-    console.log("knex in getAllUsers", knex);
+    //console.log("knex in getAllUsers", knex);
     return knex.select("*").from("trivia_players");
   },
   getUser(knex, username) {
@@ -47,7 +43,7 @@ const usersService = {
   getUserProfile(username) {
     return store.users.find(user => user.username === username);
   },
-  postNewUserNoTeam(knex, profile) {
+  postNewUser(knex, profile) {
     console.log("knex in postNewUserNOTeam", knex);
     //return store.users.push(profile);
     return knex
@@ -90,12 +86,6 @@ const usersService = {
   },
   changePlayerName(newName, username) {
     store.users.find(user => user.username === username).name = newName;
-  },
-  postUserWithTeam: (knex, userObject, teamcode) => {
-    console.log(userObject, teamcode);
-    // const user = { username: userObject.username, role: "Member" };
-    // store.users.push(userObject);
-    // store.teams.find(team => team.teamcode === teamcode).members.push(user);
   }
 };
 
