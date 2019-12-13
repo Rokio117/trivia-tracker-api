@@ -65,11 +65,22 @@ usersRouter
 usersRouter
   .route("/:user_name/name")
   .get(validateUserExists, (req, res, next) => {
-    res.json(userService.getNameFromUsername(req.params.user_name));
+    userService
+      .getNameFromUsername(req.app.get("db"), req.params.user_name)
+      .then(nickname => {
+        res.json(nickname);
+      });
   })
   .patch(keyValidator(["nickname"]), validateUserExists, (req, res, next) => {
-    userService.changePlayerName(req.body.name, req.params.user_name);
-    res.json(userService.getUser(req.params.user_name));
+    userService
+      .changePlayerName(
+        req.app.get("db"),
+        req.body.nickname,
+        req.params.user_name
+      )
+      .then(user => {
+        return res.json(user);
+      });
   });
 
 usersRouter
@@ -95,18 +106,22 @@ usersRouter
         password: password
       };
 
-      //validate team exists
-      userService.postNewUser(req.app.get("db"), newUser, teamcode.teamcode);
-      userService.getUserId(req.app.get("db"));
-      res.json(userService.getUserTeams(req.params.user_name));
+      //1 validations check
+      //2 post user check
+      //3 get assigned user id check
+      //4 using id post user/team relationship to members check
+      //5 GET user teams
+      //6 send team information
+      userService.postNewUser(req.app.get("db"), newUser).then(user => {
+        teamService
+          .addToTeam(req.app.get("db"), user[0].id, teamcode, "Member")
+          .then(response => {
+            console.log("ran");
+            res.status(200).json(response);
+          });
+      });
     }
   );
-
-usersRouter
-  .route("/:user_name/profile")
-  .get(validateUserExists, (req, res, next) => {
-    res.json(userService.getUserProfile(req.params.user_name));
-  });
 
 usersRouter.use(serverError);
 
@@ -133,19 +148,18 @@ function validateDuplicateUser(req, res, next) {
   const username = req.params.user_name
     ? req.params.user_name
     : req.body.username;
+  console.log("username in validate duplicateuser", username);
   userService.userExists(req.app.get("db"), username).then(id => {
     //console.log(id, "id in validate duplicate");
     if (id.length) {
-      console.log("went error path");
+      //console.log("went error path");
       let err = new Error("User name already exists");
       err.status = 400;
       return next(err);
     }
     //console.log("went middle path");
-    next();
+    return next();
   });
-  //console.log("went bottom path");
-  next();
 }
 
 module.exports = usersRouter;

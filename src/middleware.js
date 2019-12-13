@@ -122,10 +122,9 @@ function validateTeamExists(req, res, next) {
       err.status = 404;
       return next(err);
     }
+    console.log("went middle path");
     return next();
   });
-
-  next();
 }
 
 function serverError(err, req, res, next) {

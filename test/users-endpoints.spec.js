@@ -24,7 +24,7 @@ describe.only("Users Endpoints", function() {
   const newUser = {
     username: "Bubba",
     password: "password",
-    nickname: "hoppers"
+    nickname: "Bubba"
   };
   before("make knex instance", () => {
     console.log(process.env.TEST_DB_URL);
@@ -38,11 +38,11 @@ describe.only("Users Endpoints", function() {
   after("disconnect from db", () => db.destroy());
   before("clean the tables", () => {
     console.log("before cleantables ran");
-    cleanTables(db);
+    return cleanTables(db);
   });
   afterEach("clean up", () => {
     console.log("after cleantables ran");
-    cleanTables(db);
+    return cleanTables(db);
   });
 
   describe(`Get /api/users/`, () => {
@@ -70,7 +70,7 @@ describe.only("Users Endpoints", function() {
         id: 14,
         username: "Bubba",
         password: "password",
-        nickname: "hoppers"
+        nickname: "Bubba"
       }
     ];
     it(`responds with array of users with new user included`, () => {
@@ -157,6 +157,14 @@ describe.only("Users Endpoints", function() {
     });
   });
   describe(`POST /api/users/:user_name/teams`, () => {
+    beforeEach("check the members table", () => {
+      return db
+        .select("*")
+        .from("members")
+        .then(members =>
+          console.log(members, "members in beforeEach of /user_name/teams")
+        );
+    });
     beforeEach("insert players and teams", () => {
       return helpers.seedUsers(db, users);
     });
@@ -166,17 +174,46 @@ describe.only("Users Endpoints", function() {
     beforeEach("insert players and teams", () => {
       return helpers.seedMembers(db, members);
     });
+
     const body = {
-      teamcode: password,
-      nickname: newUser.nickname,
-      password: newUser.password
+      teamcode: "password",
+      nickname: "Bubba",
+      password: "password"
     };
+    const expected = { id: 15, player_id: 14, team_id: 1 };
 
     it("responds with users teams", () => {
       return supertest(app)
-        .post(`/api/users/${newuser.username}/teams`)
+        .post(`/api/users/Bubba/teams`)
         .send(body)
-        .expect(teams[0]);
+        .expect([expected]);
+    });
+  });
+  describe("GET /api/users/:user_name/name", () => {
+    beforeEach("insert players ", () => {
+      return helpers.seedUsers(db, users);
+    });
+    it("responds with player name", () => {
+      return supertest(app)
+        .get(`/api/users/Rokio/name`)
+        .expect([{ nickname: "Nick" }]);
+    });
+  });
+  describe("PATCH /api/users:user_name/name", () => {
+    beforeEach("insert players ", () => {
+      return helpers.seedUsers(db, users);
+    });
+    const expected = {
+      id: 1,
+      username: "Rokio",
+      nickname: "Donald",
+      password: "password"
+    };
+    it("responds with new player info", () => {
+      return supertest(app)
+        .patch(`/api/users/Rokio/name`)
+        .send({ nickname: "Donald" })
+        .expect([expected]);
     });
   });
 });

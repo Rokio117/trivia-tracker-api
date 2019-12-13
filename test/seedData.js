@@ -76,20 +76,20 @@ const seedData = {
 
   members() {
     return [
-      { id: 1, player_id: 1, team_id: 1 },
-      { id: 2, player_id: 2, team_id: 1 },
-      { id: 3, player_id: 3, team_id: 1 },
-      { id: 4, player_id: 1, team_id: 2 },
-      { id: 5, player_id: 4, team_id: 2 },
-      { id: 6, player_id: 6, team_id: 2 },
-      { id: 7, player_id: 5, team_id: 2 },
-      { id: 8, player_id: 7, team_id: 3 },
-      { id: 9, player_id: 8, team_id: 3 },
-      { id: 10, player_id: 9, team_id: 3 },
-      { id: 11, player_id: 10, team_id: 3 },
-      { id: 12, player_id: 11, team_id: 4 },
-      { id: 13, player_id: 12, team_id: 4 },
-      { id: 14, player_id: 13, team_id: 4 }
+      { player_id: 1, team_id: 1 },
+      { player_id: 2, team_id: 1 },
+      { player_id: 3, team_id: 1 },
+      { player_id: 1, team_id: 2 },
+      { player_id: 4, team_id: 2 },
+      { player_id: 6, team_id: 2 },
+      { player_id: 5, team_id: 2 },
+      { player_id: 7, team_id: 3 },
+      { player_id: 8, team_id: 3 },
+      { player_id: 9, team_id: 3 },
+      { player_id: 10, team_id: 3 },
+      { player_id: 11, team_id: 4 },
+      { player_id: 12, team_id: 4 },
+      { player_id: 13, team_id: 4 }
     ];
   },
 

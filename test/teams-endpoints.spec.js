@@ -25,6 +25,7 @@ describe.only("Users Endpoints", function() {
   after("disconnect from db", () => db.destroy());
   before("clean the tables", () => cleanTables(db));
   afterEach("clean up", () => cleanTables(db));
+  //seed tables beforeeach, if test needs clean tables clean it manually in the test
 
   describe.skip(`Get /api/teams/`, () => {
     context(`Given no articles`, () => {

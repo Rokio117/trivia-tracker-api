@@ -15,6 +15,12 @@ const teamsService = {
   getTeam(teamcode) {
     return store.teams.find(team => team.teamcode === teamcode);
   },
+  getTeamById(knex, teamId) {
+    return knex
+      .select("*")
+      .from("trivia_teams")
+      .where({ id: teamId });
+  },
   getTeamMembers(teamcode) {
     return store.teams.find(team => team.teamcode === teamcode).members;
   },
@@ -37,14 +43,26 @@ const teamsService = {
   postNewTeam(teamObject) {
     store.teams.push(teamObject);
   },
-  addToTeam(player, teamcode, role) {
-    const newMember = {
-      username: player,
-      role: role
-    };
-    store.teams
-      .find(team => team.teamcode === teamcode)
-      .members.push(newMember);
+  addToTeam(knex, playerId, teamcode, role) {
+    return knex
+      .select("id")
+      .from("trivia_teams")
+      .where({ teamcode: teamcode })
+      .then(id => {
+        const member = { player_id: playerId, team_id: id[0].id };
+        return knex
+          .insert(member)
+          .into("members")
+          .returning("*")
+          .then(result => result);
+      });
+    // const newMember = {
+    //   username: player,
+    //   role: role
+    // };
+    // store.teams
+    //   .find(team => team.teamcode === teamcode)
+    //   .members.push(newMember);
   },
   changeRole(player, role, teamcode) {
     store.teams
