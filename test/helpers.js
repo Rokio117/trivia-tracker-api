@@ -82,6 +82,17 @@ const helpers = {
       thirdplace: 3,
       winnings: 200
     };
+  },
+  testTeam() {
+    return {
+      teamname: "Well Win Again Someday",
+      teamcode: "password",
+      wins: 6,
+      firstplace: 3,
+      secondplace: 2,
+      thirdplace: 1,
+      winnings: 395
+    };
   }
 };
 

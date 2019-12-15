@@ -63,7 +63,9 @@ teamsRouter
 teamsRouter
   .route("/:team_code/team")
   .get(validateTeamExists, (req, res, next) => {
-    res.json(teamsService.getTeam(req.params.team_code));
+    teamsService.getTeam(req.app.get("db"), req.params.team_code).then(team => {
+      res.json(team);
+    });
   })
   .patch(
     validateTeamExists,
@@ -72,8 +74,12 @@ teamsRouter
     (req, res, next) => {
       const teamcode = req.params.team_code;
       const newname = req.body.newname;
-      teamsService.changeTeamName(newname, teamcode);
-      return res.json(teamsService.getTeam(teamcode));
+      teamsService
+        .changeTeamName(req.app.get("db"), newname, teamcode)
+        .then(team => {
+          console.log("team after helper function", team);
+          res.json(team);
+        });
     }
   );
 

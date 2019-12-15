@@ -15,7 +15,8 @@ describe.only("Users Endpoints", function() {
   const results = seedData.results();
   const attendees = seedData.attendees();
   const newTeam = helpers.newTeam();
-  const expectedTeam = helpers.newTeam();
+  const expectedTeam = helpers.expectedTeam();
+  const testTeam = helpers.testTeam();
   before("make knex instance", () => {
     console.log(process.env.TEST_DB_URL);
     db = knex({
@@ -41,7 +42,7 @@ describe.only("Users Endpoints", function() {
       attendees
     );
   });
-  describe.only(` testing /api/teams/  `, () => {
+  describe(` testing /api/teams/  `, () => {
     context(`Get /api/teams/`, () => {
       it(`responds with all teams`, () => {
         return supertest(app)
@@ -51,11 +52,32 @@ describe.only("Users Endpoints", function() {
     });
     context(`POST /api/teams/`, () => {
       console.log(newTeam, "newteam in test");
-      it.only("posts new team and responds with new team object", () => {
+      it("posts new team and responds with new team object", () => {
         return supertest(app)
           .post(`/api/teams/`)
           .send(newTeam)
           .expect([expectedTeam]);
+      });
+    });
+  });
+  describe.only(`test /api/teams/:team_code/team`, () => {
+    context(`GET /api/teams/:team_code/team`, () => {
+      const expected = { id: 1, ...testTeam };
+      it(`Gets team object from team code`, () => {
+        return supertest(app)
+          .get(`/api/teams/${testTeam.teamcode}/team`)
+          .expect([expected]);
+      });
+      it.only(`Changes team name and responds with new team object`, () => {
+        const newTeamname = {
+          newname: "This is Why We Can't Have Nice Things"
+        };
+        const nameBuilder = { teamname: newTeamname.newname };
+        const expectedNewName = { ...testTeam, ...nameBuilder, id: 1 };
+        return supertest(app)
+          .patch(`/api/teams/${testTeam.teamcode}/team`)
+          .send(newTeamname)
+          .expect([expectedNewName]);
       });
     });
   });

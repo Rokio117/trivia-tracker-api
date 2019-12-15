@@ -13,8 +13,11 @@ const teamsService = {
   getAllTeams(knex) {
     return knex.select("*").from("trivia_teams");
   },
-  getTeam(teamcode) {
-    return store.teams.find(team => team.teamcode === teamcode);
+  getTeam(knex, teamcode) {
+    return knex
+      .select("*")
+      .from("trivia_teams")
+      .where({ teamcode });
   },
   getTeamById(knex, teamId) {
     return knex
@@ -49,6 +52,7 @@ const teamsService = {
       .returning("*")
       .then(result => {
         console.log(result, "result in postNewTeam");
+        return result;
       });
   },
   addToTeam(knex, playerId, teamcode, role) {
@@ -80,8 +84,11 @@ const teamsService = {
   changeWinnings: (winnings, teamcode) => {
     store.teams.find(team => team.teamcode === teamcode).winnings = winnings;
   },
-  changeTeamName: (name, teamcode) => {
-    store.teams.find(team => team.teamcode === teamcode).name = name;
+  changeTeamName: (knex, newTeamName, teamcode) => {
+    return knex("trivia_teams")
+      .where({ teamcode: teamcode })
+      .update({ teamname: newTeamName })
+      .returning("*");
   },
   addEvent(event, teamcode) {
     const winnings =

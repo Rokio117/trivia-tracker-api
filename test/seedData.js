@@ -32,7 +32,6 @@ const seedData = {
   teams() {
     return [
       {
-        id: 1,
         teamname: "Well Win Again Someday",
         teamcode: "password",
         wins: 6,
@@ -42,7 +41,6 @@ const seedData = {
         winnings: 395
       },
       {
-        id: 2,
         teamname: "Paddys Pub",
         teamcode: "password2",
         wins: 600,
@@ -52,7 +50,6 @@ const seedData = {
         winnings: 1000
       },
       {
-        id: 3,
         teamname: "Demo Team",
         teamcode: "Demo",
         wins: 6,
@@ -62,7 +59,6 @@ const seedData = {
         winnings: 100
       },
       {
-        id: 4,
         teamname: "Dumbledors Army",
         teamcode: "Potter",
         wins: 2,
