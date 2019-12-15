@@ -4,6 +4,7 @@ const userService = require("../users/users-service");
 const teamsService = {
   doesExist(knex, teamcode) {
     //return store.teams.map(team => team.teamcode === teamcode).includes(true);
+    //console.log("teamcode in doesExist", teamcode);
     return knex
       .select("id")
       .from("trivia_teams")
@@ -40,8 +41,15 @@ const teamsService = {
       })
     );
   },
-  postNewTeam(teamObject) {
-    store.teams.push(teamObject);
+  postNewTeam(knex, teamObject) {
+    //store.teams.push(teamObject);
+    return knex
+      .insert(teamObject)
+      .into("trivia_teams")
+      .returning("*")
+      .then(result => {
+        console.log(result, "result in postNewTeam");
+      });
   },
   addToTeam(knex, playerId, teamcode, role) {
     return knex

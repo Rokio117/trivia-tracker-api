@@ -5,7 +5,7 @@ const { seedData } = require("./seedData");
 const { cleanTables } = require("./helpers");
 require("dotenv").config();
 
-describe.only("Users Endpoints", function() {
+describe.skip("Users Endpoints", function() {
   let db;
   const users = seedData.users();
   const teams = seedData.teams();

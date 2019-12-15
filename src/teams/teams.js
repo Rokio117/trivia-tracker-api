@@ -26,41 +26,36 @@ teamsRouter
   .post(
     validateTeamNoExists,
     keyValidator([
-      "name",
+      "teamname",
       "teamcode",
-      "members",
       "wins",
       "firstplace",
       "secondplace",
       "thirdplace",
-      "winnings",
-      "history"
+      "winnings"
     ]),
     (req, res, next) => {
       const {
-        name,
+        teamname,
         teamcode,
-        members,
         wins,
         firstplace,
         secondplace,
         thirdplace,
-        winnings,
-        history
+        winnings
       } = req.body;
       const newteam = {
-        name: name,
+        teamname: teamname,
         teamcode: teamcode,
-        members: members,
         wins: wins,
         firstplace: firstplace,
         secondplace: secondplace,
         thirdplace: thirdplace,
-        winnings: winnings,
-        history: history
+        winnings: winnings
       };
-      teamsService.postt(newteam);
-      res.json(teamsService.getTeam(teamcode));
+      teamsService.postNewTeam(req.app.get("db"), newteam).then(team => {
+        res.json(team);
+      });
     }
   );
 //teamsRouter.route("/:team_code/*").get(validateTeamcode);
@@ -169,13 +164,15 @@ teamsRouter.route("/:team_code/event").post(
 );
 
 function validateTeamNoExists(req, res, next) {
-  const exists = teamsService.doesExist(req.body.teamcode);
-  if (exists) {
-    let err = new Error("Team code is taken");
-    err.status = 400;
-    next(err);
-  }
-  next();
+  teamsService.doesExist(req.app.get("db"), req.body.teamcode).then(team => {
+    console.log("team after doesExist", team);
+    if (team.length) {
+      let err = new Error("Team code is taken");
+      err.status = 400;
+      return next(err);
+    }
+    return next();
+  });
 }
 
 function validateRole(req, res, next) {
