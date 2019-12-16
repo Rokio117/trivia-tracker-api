@@ -102,7 +102,9 @@ describe.only("Users Endpoints", function() {
     context(`POST /:team_code/members`, () => {
       it("posts new member and returns new member relationship", () => {
         const newMember = { username: "Demo", role: "Guest" };
-        const expectedMembership = [{ id: 15, player_id: 7, team_id: 1 }];
+        const expectedMembership = [
+          { id: 16, player_id: 7, team_id: 1, role: "Guest" }
+        ];
         return supertest(app)
           .post(`/api/teams/${testTeam.teamcode}/members`)
           .send(newMember)
@@ -114,8 +116,16 @@ describe.only("Users Endpoints", function() {
     context(`GET /:team_code/:user_name/role`, () => {
       it("gets the role of the user", () => {
         return supertest(app)
-          .get(`/api/teams/${testUser.username}/${testTeam.teamcode}/role`)
-          .expect("Captain");
+          .get(`/api/teams/${testTeam.teamcode}/${testUser.username}/role`)
+          .expect([{ role: "Captain" }]);
+      });
+    });
+    context(`PATCH /:team_code/:user_name/role`, () => {
+      it("Changes the users role", () => {
+        return supertest(app)
+          .patch(`/api/teams/${testTeam.teamcode}/${testUser.username}/role`)
+          .send({ role: "Reporter" })
+          .expect([{ id: 1, player_id: 1, team_id: 1, role: "Reporter" }]);
       });
     });
   });

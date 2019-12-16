@@ -51,7 +51,20 @@ const teamsService = {
           });
       });
   },
-  getRoleOfMember(knex, username, teamcode) {},
+  getRoleOfMember(knex, player_id, teamcode) {
+    return knex
+      .select("id")
+      .from("trivia_teams")
+      .where({ teamcode })
+      .then(teamCode => {
+        const team_id = teamCode[0].id;
+        console.log("player_id", player_id, teamCode);
+        return knex
+          .select("role")
+          .from("members")
+          .where({ player_id: player_id, team_id: team_id });
+      });
+  },
   userExists(username) {
     return store.users.map(user => user.username).includes(username);
   },
@@ -79,7 +92,7 @@ const teamsService = {
       .from("trivia_teams")
       .where({ teamcode: teamcode })
       .then(id => {
-        const member = { player_id: playerId, team_id: id[0].id };
+        const member = { player_id: playerId, team_id: id[0].id, role: role };
         return knex
           .insert(member)
           .into("members")
@@ -94,10 +107,18 @@ const teamsService = {
     //   .find(team => team.teamcode === teamcode)
     //   .members.push(newMember);
   },
-  changeRole(player, role, teamcode) {
-    store.teams
-      .find(team => team.teamcode === teamcode)
-      .members.find(member => member.username === player).role = role;
+  changeRole(knex, playerId, role, teamcode) {
+    return knex
+      .select("id")
+      .from("trivia_teams")
+      .where({ teamcode: teamcode })
+      .then(id => {
+        const team_id = id[0].id;
+        return knex("members")
+          .where({ player_id: playerId, team_id: team_id })
+          .update({ role: role })
+          .returning("*");
+      });
   },
   changeWinnings: (winnings, teamcode) => {
     store.teams.find(team => team.teamcode === teamcode).winnings = winnings;

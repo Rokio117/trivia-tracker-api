@@ -72,20 +72,21 @@ const seedData = {
 
   members() {
     return [
-      { player_id: 1, team_id: 1 },
-      { player_id: 2, team_id: 1 },
-      { player_id: 3, team_id: 1 },
-      { player_id: 1, team_id: 2 },
-      { player_id: 4, team_id: 2 },
-      { player_id: 6, team_id: 2 },
-      { player_id: 5, team_id: 2 },
-      { player_id: 7, team_id: 3 },
-      { player_id: 8, team_id: 3 },
-      { player_id: 9, team_id: 3 },
-      { player_id: 10, team_id: 3 },
-      { player_id: 11, team_id: 4 },
-      { player_id: 12, team_id: 4 },
-      { player_id: 13, team_id: 4 }
+      { player_id: 1, team_id: 1, role: "Captain" },
+      { player_id: 2, team_id: 1, role: "Captain" },
+      { player_id: 3, team_id: 1, role: "Reporter" },
+      { player_id: 1, team_id: 2, role: "Captain" },
+      { player_id: 4, team_id: 2, role: "Captain" },
+      { player_id: 6, team_id: 2, role: "Reporter" },
+      { player_id: 5, team_id: 2, role: "Member" },
+      { player_id: 7, team_id: 3, role: "Captain" },
+      { player_id: 8, team_id: 3, role: "Reporter" },
+      { player_id: 9, team_id: 3, role: "Member" },
+      { player_id: 10, team_id: 3, role: "Guest" },
+      { player_id: 7, team_id: 4, role: "Captain" },
+      { player_id: 11, team_id: 4, role: "Reporter" },
+      { player_id: 12, team_id: 4, role: "Guest" },
+      { player_id: 13, team_id: 4, role: "Captain" }
     ];
   },
 

@@ -119,14 +119,19 @@ teamsRouter
 teamsRouter
   .route("/:team_code/:user_name/role")
   .get(validateTeamExists, validateUserExists, (req, res, next) => {
-    teamsService
-      .getRoleOfMember(
-        req.app.get("db"),
-        req.params.user_name,
-        req.params.team_code
-      )
-      .then(role => {
-        res.json(role[0].role);
+    usersService
+      .getUserId(req.app.get("db"), req.params.user_name)
+      .then(userId => {
+        teamsService
+          .getRoleOfMember(
+            req.app.get("db"),
+            userId[0].id,
+            req.params.team_code
+          )
+          .then(role => {
+            console.log(role, "role before res.json");
+            res.json(role);
+          });
       });
   })
   .patch(
@@ -139,8 +144,13 @@ teamsRouter
       const teamcode = req.params.team_code;
       const username = req.params.user_name;
       const role = req.body.role;
-      teamsService.changeRole(username, role, teamcode);
-      res.json(teamsService.getRoleOfMember(username, teamcode));
+      usersService.getUserId(req.app.get("db"), username).then(username => {
+        teamsService
+          .changeRole(req.app.get("db"), username[0].id, role, teamcode)
+          .then(result => {
+            res.json(result);
+          });
+      });
     }
   );
 
