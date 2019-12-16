@@ -93,6 +93,50 @@ const helpers = {
       thirdplace: 1,
       winnings: 395
     };
+  },
+  expectedTeams() {
+    return [
+      {
+        id: 1,
+        teamname: "Well Win Again Someday",
+        teamcode: "password",
+        wins: 6,
+        firstplace: 3,
+        secondplace: 2,
+        thirdplace: 1,
+        winnings: 395
+      },
+      {
+        id: 2,
+        teamname: "Paddys Pub",
+        teamcode: "password2",
+        wins: 600,
+        firstplace: 300,
+        secondplace: 200,
+        thirdplace: 100,
+        winnings: 1000
+      },
+      {
+        id: 3,
+        teamname: "Demo Team",
+        teamcode: "Demo",
+        wins: 6,
+        firstplace: 1,
+        secondplace: 2,
+        thirdplace: 3,
+        winnings: 100
+      },
+      {
+        id: 4,
+        teamname: "Dumbledors Army",
+        teamcode: "Potter",
+        wins: 2,
+        firstplace: 0,
+        secondplace: 0,
+        thirdplace: 2,
+        winnings: 2
+      }
+    ];
   }
 };
 

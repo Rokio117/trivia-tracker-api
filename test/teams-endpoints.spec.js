@@ -17,6 +17,7 @@ describe.only("Users Endpoints", function() {
   const newTeam = helpers.newTeam();
   const expectedTeam = helpers.expectedTeam();
   const testTeam = helpers.testTeam();
+  const expectedTeams = helpers.expectedTeams();
   before("make knex instance", () => {
     console.log(process.env.TEST_DB_URL);
     db = knex({
@@ -27,8 +28,14 @@ describe.only("Users Endpoints", function() {
   });
 
   after("disconnect from db", () => db.destroy());
-  before("clean the tables", () => cleanTables(db));
-  afterEach("clean up", () => cleanTables(db));
+  before("clean the tables", () => {
+    console.log("clean tables before ran");
+    return cleanTables(db);
+  });
+  afterEach("clean up", () => {
+    console.log("afterEach clean up tables ran");
+    return cleanTables(db);
+  });
   //seed tables beforeeach, if test needs clean tables clean it manually in the test
   before("seed tables", () => {
     return helpers.seedAllTables(
@@ -42,16 +49,15 @@ describe.only("Users Endpoints", function() {
       attendees
     );
   });
-  describe(` testing /api/teams/  `, () => {
-    context(`Get /api/teams/`, () => {
+  describe.only(` testing /api/teams/  `, () => {
+    context.only(`Get /api/teams/`, () => {
       it(`responds with all teams`, () => {
         return supertest(app)
           .get(`/api/teams/`)
-          .expect(teams);
+          .expect(expectedTeams);
       });
     });
     context(`POST /api/teams/`, () => {
-      console.log(newTeam, "newteam in test");
       it("posts new team and responds with new team object", () => {
         return supertest(app)
           .post(`/api/teams/`)
@@ -60,7 +66,7 @@ describe.only("Users Endpoints", function() {
       });
     });
   });
-  describe.only(`test /api/teams/:team_code/team`, () => {
+  describe(`test /api/teams/:team_code/team`, () => {
     context(`GET /api/teams/:team_code/team`, () => {
       const expected = { id: 1, ...testTeam };
       it(`Gets team object from team code`, () => {
@@ -68,7 +74,9 @@ describe.only("Users Endpoints", function() {
           .get(`/api/teams/${testTeam.teamcode}/team`)
           .expect([expected]);
       });
-      it.only(`Changes team name and responds with new team object`, () => {
+    });
+    context(`POST /api/teams/:team_code/team`, () => {
+      it(`Changes team name and responds with new team object`, () => {
         const newTeamname = {
           newname: "This is Why We Can't Have Nice Things"
         };
