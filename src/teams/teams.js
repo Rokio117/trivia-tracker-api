@@ -119,9 +119,15 @@ teamsRouter
 teamsRouter
   .route("/:team_code/:user_name/role")
   .get(validateTeamExists, validateUserExists, (req, res, next) => {
-    res.json(
-      teamsService.getRoleOfMember(req.params.user_name, req.params.team_code)
-    );
+    teamsService
+      .getRoleOfMember(
+        req.app.get("db"),
+        req.params.user_name,
+        req.params.team_code
+      )
+      .then(role => {
+        res.json(role[0].role);
+      });
   })
   .patch(
     validateTeamExists,

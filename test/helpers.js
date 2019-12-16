@@ -140,6 +140,9 @@ const helpers = {
   },
   expectedMembers() {
     return ["Rokio", "Jen", "Ash"];
+  },
+  testUser() {
+    return { username: "Rokio", password: "password", nickname: "Nick" };
   }
 };
 

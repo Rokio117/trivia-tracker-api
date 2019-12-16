@@ -51,12 +51,7 @@ const teamsService = {
           });
       });
   },
-  getRoleOfMember(username, teamcode) {
-    console.log(username, teamcode);
-    return store.teams
-      .find(team => team.teamcode === teamcode)
-      .members.find(member => member.username === username).role;
-  },
+  getRoleOfMember(knex, username, teamcode) {},
   userExists(username) {
     return store.users.map(user => user.username).includes(username);
   },

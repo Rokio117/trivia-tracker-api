@@ -19,6 +19,7 @@ describe.only("Users Endpoints", function() {
   const testTeam = helpers.testTeam();
   const expectedTeams = helpers.expectedTeams();
   const expectedMembers = helpers.expectedMembers();
+  const testUser = helpers.testUser();
   before("make knex instance", () => {
     console.log(process.env.TEST_DB_URL);
     db = knex({
@@ -90,7 +91,7 @@ describe.only("Users Endpoints", function() {
       });
     });
   });
-  describe.only(`test /api/teams/:team_code/members`, () => {
+  describe(`test /api/teams/:team_code/members`, () => {
     context(`GET /:team_code/members`, () => {
       it("gets members of the team", () => {
         return supertest(app)
@@ -99,13 +100,22 @@ describe.only("Users Endpoints", function() {
       });
     });
     context(`POST /:team_code/members`, () => {
-      it("posts new member and returns new roster", () => {
-        const newMember = { newmember: "Demo", role: "Guest" };
-        const newExpectedMembers = [...expectedMembers, "Demo"];
+      it("posts new member and returns new member relationship", () => {
+        const newMember = { username: "Demo", role: "Guest" };
+        const expectedMembership = [{ id: 15, player_id: 7, team_id: 1 }];
         return supertest(app)
           .post(`/api/teams/${testTeam.teamcode}/members`)
           .send(newMember)
-          .expect(newExpectedMembers);
+          .expect(expectedMembership);
+      });
+    });
+  });
+  describe(`test /api/users/:team_code/:user_name/role`, () => {
+    context(`GET /:team_code/:user_name/role`, () => {
+      it("gets the role of the user", () => {
+        return supertest(app)
+          .get(`/api/teams/${testUser.username}/${testTeam.teamcode}/role`)
+          .expect("Captain");
       });
     });
   });
