@@ -90,12 +90,22 @@ describe.only("Users Endpoints", function() {
       });
     });
   });
-  describe(`test /api/teams/:team_code/members`, () => {
+  describe.only(`test /api/teams/:team_code/members`, () => {
     context(`GET /:team_code/members`, () => {
       it("gets members of the team", () => {
         return supertest(app)
-          .get(`/api/teams/:${testTeam.teamcode}`)
+          .get(`/api/teams/${testTeam.teamcode}/members`)
           .expect(expectedMembers);
+      });
+    });
+    context(`POST /:team_code/members`, () => {
+      it("posts new member and returns new roster", () => {
+        const newMember = { newmember: "Demo", role: "Guest" };
+        const newExpectedMembers = [...expectedMembers, "Demo"];
+        return supertest(app)
+          .post(`/api/teams/${testTeam.teamcode}/members`)
+          .send(newMember)
+          .expect(newExpectedMembers);
       });
     });
   });

@@ -40,13 +40,13 @@ const teamsService = {
           .where({ team_id })
           .then(players => {
             const playerIds = players.map(player => player.player_id);
-
             return knex
               .select("username")
               .from("trivia_players")
-              .whereIn(id, playerIds)
-              .then(usernames => {
-                console.log(usernames, "usernames in getTeamMembers");
+              .whereIn("id", playerIds)
+              .then(playerIds => {
+                const userNames = playerIds.map(id => id.username);
+                return userNames;
               });
           });
       });

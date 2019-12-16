@@ -1,4 +1,5 @@
 const teamsService = require("../src/teams/teams-service");
+const userService = require("./users/users-service");
 const express = require("express");
 function validateBodyTypes(req, res, next) {
   const possibleStringKeys = [
@@ -96,21 +97,17 @@ function keyValidator(requiredKeys = []) {
 }
 
 function validateUserExists(req, res, next) {
-  if (req.params.user_name) {
-    if (!usersService.userExists(req.params.user_name)) {
-      let err = new Error("User does not exist");
-      err.status = 404;
-      return next(err);
-    }
-  }
+  const userName = req.params.user_name
+    ? req.params.user_name
+    : req.body.username;
 
-  if (req.body.newMember) {
-    if (!usersService.userExists(req.body.newMember)) {
+  userService.userExists(req.app.get("db"), userName).then(id => {
+    if (!id.length) {
       let err = new Error("User does not exist");
       err.status = 404;
       return next(err);
     }
-  }
+  });
   next();
 }
 function validateTeamExists(req, res, next) {

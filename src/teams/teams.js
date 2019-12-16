@@ -96,12 +96,23 @@ teamsRouter
     validateTeamExists,
     validateUserExists,
 
-    keyValidator(["newMember", "role"]),
+    keyValidator(["username", "role"]),
     validateRole,
     (req, res, next) => {
-      const { newMember, role } = req.body;
-      teamsService.addToTeam(newMember, req.params.team_code, role);
-      res.json(teamsService.getTeamMembers(req.params.team_code));
+      const { username, role } = req.body;
+      usersService.getUserId(req.app.get("db"), username).then(userid => {
+        teamsService
+          .addToTeam(
+            req.app.get("db"),
+            userid[0].id,
+            req.params.team_code,
+            role
+          )
+          .then(members => {
+            console.log(members);
+            res.json(members);
+          });
+      });
     }
   );
 
