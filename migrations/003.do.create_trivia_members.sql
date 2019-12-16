@@ -1,12 +1,12 @@
 
-DROP TYPE IF EXISTS roles
+DROP TYPE IF EXISTS roles;
 
 CREATE TYPE roles AS ENUM (
   'Captain',
   'Reporter',
   'Member',
   'Guest'
-),
+);
 
 
 CREATE TABLE IF NOT EXISTS members (
@@ -14,4 +14,4 @@ CREATE TABLE IF NOT EXISTS members (
   player_id INTEGER REFERENCES trivia_players(id) NOT NULL,
   team_id INTEGER REFERENCES trivia_teams(id) NOT NULL,
   role roles NOT NULL
-);
+)

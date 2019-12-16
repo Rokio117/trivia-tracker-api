@@ -33,22 +33,23 @@ TRUNCATE
   ('Demo Team','Demo',6,1,2,3,100),
   ('Dumbledors Army','Potter',2,0,0,2,20);
 
-  INSERT INTO members (player_id, team_id)
+  INSERT INTO members (player_id, team_id, role)
   VALUES 
-  (1,1),
-  (2,1),
-  (3,1),
-  (1,2),
-  (4,2),
-  (6,2),
-  (5,2),
-  (7,3),
-  (8,3),
-  (9,3),
-  (10,3),
-  (11,4),
-  (12,4),
-  (13,4);
+  (1,1,'Captain'),
+  (2,1,'Captain'),
+  (3,1,'Reporter'),
+  (1,2,'Captain'),
+  (4,2,'Captain'),
+  (6,2,'Reporter'),
+  (5,2,'Member'),
+  (7,3,'Captain'),
+  (8,3,'Reporter'),
+  (9,3,'Member'),
+  (10,3,'Guest'),
+  (7,4,'Captain'),
+  (11,4,'Reporter'),
+  (12,4,'Guest'),
+  (13,4,'Captain');
 
 INSERT INTO trivia_locations (locationName)
 VALUES
