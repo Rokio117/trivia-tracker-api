@@ -137,6 +137,9 @@ const helpers = {
         winnings: 2
       }
     ];
+  },
+  expectedMembers() {
+    return ["Rokio", "Jen", "Ash"];
   }
 };
 

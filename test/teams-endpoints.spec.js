@@ -18,6 +18,7 @@ describe.only("Users Endpoints", function() {
   const expectedTeam = helpers.expectedTeam();
   const testTeam = helpers.testTeam();
   const expectedTeams = helpers.expectedTeams();
+  const expectedMembers = helpers.expectedMembers();
   before("make knex instance", () => {
     console.log(process.env.TEST_DB_URL);
     db = knex({
@@ -37,7 +38,7 @@ describe.only("Users Endpoints", function() {
     return cleanTables(db);
   });
   //seed tables beforeeach, if test needs clean tables clean it manually in the test
-  before("seed tables", () => {
+  beforeEach("seed tables", () => {
     return helpers.seedAllTables(
       db,
       users,
@@ -49,8 +50,8 @@ describe.only("Users Endpoints", function() {
       attendees
     );
   });
-  describe.only(` testing /api/teams/  `, () => {
-    context.only(`Get /api/teams/`, () => {
+  describe(` testing /api/teams/  `, () => {
+    context(`Get /api/teams/`, () => {
       it(`responds with all teams`, () => {
         return supertest(app)
           .get(`/api/teams/`)
@@ -86,6 +87,15 @@ describe.only("Users Endpoints", function() {
           .patch(`/api/teams/${testTeam.teamcode}/team`)
           .send(newTeamname)
           .expect([expectedNewName]);
+      });
+    });
+  });
+  describe(`test /api/teams/:team_code/members`, () => {
+    context(`GET /:team_code/members`, () => {
+      it("gets members of the team", () => {
+        return supertest(app)
+          .get(`/api/teams/:${testTeam.teamcode}`)
+          .expect(expectedMembers);
       });
     });
   });

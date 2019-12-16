@@ -25,8 +25,31 @@ const teamsService = {
       .from("trivia_teams")
       .where({ id: teamId });
   },
-  getTeamMembers(teamcode) {
-    return store.teams.find(team => team.teamcode === teamcode).members;
+  getTeamMembers(knex, teamcode) {
+    console.log("getteammembers ran");
+    //return store.teams.find(team => team.teamcode === teamcode).members;
+    return knex
+      .select("id")
+      .from("trivia_teams")
+      .where({ teamcode })
+      .then(id => {
+        const team_id = id[0].id;
+        return knex
+          .select("player_id")
+          .from("members")
+          .where({ team_id })
+          .then(players => {
+            const playerIds = players.map(player => player.player_id);
+
+            return knex
+              .select("username")
+              .from("trivia_players")
+              .whereIn(id, playerIds)
+              .then(usernames => {
+                console.log(usernames, "usernames in getTeamMembers");
+              });
+          });
+      });
   },
   getRoleOfMember(username, teamcode) {
     console.log(username, teamcode);

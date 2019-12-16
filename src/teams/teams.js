@@ -85,8 +85,12 @@ teamsRouter
 
 teamsRouter
   .route("/:team_code/members")
-  .get(validateTeamExists, () => (req, res, next) => {
-    res.json(teamsService.getTeamMembers(req.params.team_code));
+  .get(validateTeamExists, (req, res, next) => {
+    teamsService
+      .getTeamMembers(req.app.get("db"), req.params.team_code)
+      .then(members => {
+        res.json(members);
+      });
   })
   .post(
     validateTeamExists,
