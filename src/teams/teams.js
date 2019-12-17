@@ -157,9 +157,18 @@ teamsRouter
 teamsRouter
   .route("/:team_code/names")
   .get(validateTeamExists, (req, res, next) => {
-    const members = teamsService.getTeamMembers(req.params.team_code);
+    teamsService
+      .getTeamMembers(req.app.get("db"), req.params.team_code)
+      .then(usernames => {
+        teamsService
+          .getNamedMembersOfTeam(req.app.get("db"), usernames)
+          .then(nicknames => {
+            const nicknameList = nicknames.map(nickname => nickname.nickname);
+            res.json(nicknameList);
+          });
+      });
 
-    res.json(teamsService.getNamedMembersOfTeam(members));
+    //res.json(teamsService.getNamedMembersOfTeam(members));
   });
 
 teamsRouter.route("/:team_code/winnings").patch(
@@ -168,8 +177,12 @@ teamsRouter.route("/:team_code/winnings").patch(
   keyValidator(["winnings"]),
   (req, res, next) => {
     const winnings = req.body.winnings;
-    teamsService.changeWinnings(winnings, req.params.team_code);
-    res.json(teamsService.getTeam(req.params.team_code));
+    teamsService
+      .changeWinnings(req.app.get("db"), winnings, req.params.team_code)
+      .then(team => {
+        console.log(team);
+        res.json(team);
+      });
   }
 );
 

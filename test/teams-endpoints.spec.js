@@ -20,6 +20,7 @@ describe.only("Users Endpoints", function() {
   const expectedTeams = helpers.expectedTeams();
   const expectedMembers = helpers.expectedMembers();
   const testUser = helpers.testUser();
+  const teamWithNewWinnings = helpers.teamWithNewWinnings();
   before("make knex instance", () => {
     console.log(process.env.TEST_DB_URL);
     db = knex({
@@ -126,6 +127,25 @@ describe.only("Users Endpoints", function() {
           .patch(`/api/teams/${testTeam.teamcode}/${testUser.username}/role`)
           .send({ role: "Reporter" })
           .expect([{ id: 1, player_id: 1, team_id: 1, role: "Reporter" }]);
+      });
+    });
+  });
+  describe(`test /api/teams/:team_code/names`, () => {
+    context(`GET /:team_code/names`, () => {
+      it("returns a list of names from the team", () => {
+        return supertest(app)
+          .get(`/api/teams/${testTeam.teamcode}/names`)
+          .expect(["Nick", "Jennifer", "Ashley"]);
+      });
+    });
+  });
+  describe.only(`test /api/:team_code/winnings`, () => {
+    context(`PATCH /:team_code/names`, () => {
+      it("Changes the winnings for the team", () => {
+        return supertest(app)
+          .post(`/api/teams/${testTeam.teamcode}/winnings`)
+          .send({ winnings: 5000 })
+          .expect([teamWithNewWinnings]);
       });
     });
   });

@@ -143,6 +143,17 @@ const helpers = {
   },
   testUser() {
     return { username: "Rokio", password: "password", nickname: "Nick" };
+  },
+  teamWithNewWinnings() {
+    return {
+      teamname: "Well Win Again Someday",
+      teamcode: "password",
+      wins: 6,
+      firstplace: 3,
+      secondplace: 2,
+      thirdplace: 1,
+      winnings: 5000
+    };
   }
 };
 

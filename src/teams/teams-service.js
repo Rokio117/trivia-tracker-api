@@ -68,12 +68,16 @@ const teamsService = {
   userExists(username) {
     return store.users.map(user => user.username).includes(username);
   },
-  getNamedMembersOfTeam: members => {
-    return members.map(member =>
-      Object.assign(member, {
-        name: userService.getNameFromUsername(member.username)
-      })
-    );
+  getNamedMembersOfTeam(knex, userNames) {
+    return knex
+      .select("nickname")
+      .from("trivia_players")
+      .whereIn("username", userNames);
+    // return members.map(member =>
+    //   Object.assign(member, {
+    //     name: userService.getNameFromUsername(member.username)
+    //   })
+    // );
   },
   postNewTeam(knex, teamObject) {
     //store.teams.push(teamObject);
@@ -120,8 +124,11 @@ const teamsService = {
           .returning("*");
       });
   },
-  changeWinnings: (winnings, teamcode) => {
-    store.teams.find(team => team.teamcode === teamcode).winnings = winnings;
+  changeWinnings(knex, winnings, teamcode) {
+    return knex("trivia_teams")
+      .where({ teamcode })
+      .update({ winnings: winnings })
+      .returning("*");
   },
   changeTeamName: (knex, newTeamName, teamcode) => {
     return knex("trivia_teams")
