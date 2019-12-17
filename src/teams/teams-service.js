@@ -157,6 +157,26 @@ const teamsService = {
         store.teams.find(team => team.teamcode === teamcode).thirdPlace++;
       }
     }
+  },
+  getLocations(knex) {
+    return knex
+      .select("*")
+      .from("trivia_locations")
+      .then(locations => {
+        return locations;
+      });
+  },
+  getLocationId(knex, location) {
+    return knex
+      .select("id")
+      .from("trivia_locations")
+      .where({ locationname: location });
+  },
+  postNewLocation(knex, newLocation) {
+    return knex
+      .insert({ locationname: newLocation })
+      .into("trivia_locations")
+      .returning("id");
   }
 };
 

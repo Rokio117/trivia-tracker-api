@@ -11,6 +11,7 @@ const { validateUserExists } = require("../middleware");
 const { validateTeamExists } = require("../middleware");
 const { serverError } = require("../middleware");
 const { validateEvent } = require("./teams-validators");
+const joinsPractice = require("./joins-practice");
 teamsRouter.use(jsonBodyParser);
 teamsRouter.use(validateBodyTypes);
 
@@ -186,32 +187,58 @@ teamsRouter.route("/:team_code/winnings").patch(
   }
 );
 
-teamsRouter.route("/:team_code/event").post(
-  validateTeamExists,
+teamsRouter
+  .route("/:team_code/event")
+  .post(
+    validateTeamExists,
+    keyValidator([
+      "date",
+      "location",
+      "outcome",
+      "roster",
+      "position",
+      "winnings"
+    ]),
+    validateEvent,
+    (req, res, next) => {
+      const { date, location, outcome, roster, position, winnings } = req.body;
+      const newEvent = {
+        date: date,
+        location: location,
+        outcome: outcome,
+        roster: roster,
+        position: position,
+        winnings: winnings
+      };
+      teamsService.getLocations(req.app.get("db")).then(locations => {
+        let locationNames = locations.map(
+          locationObject => locationObject.locationname
+        );
+        let teamId;
+        if (locationNames.includes(newEvent.location)) {
+          teamsService.getLocationId(req.app.get("db"), locations).then(id => {
+            let teamId = id;
+            return teamId;
+          });
+        } else
+          return teamsService
+            .postNewLocation(req.app.get("db"), newEvent.location)
+            .then(id => {
+              let teamId = id[0].id;
+              return teamId;
+            });
+        console.log(teamId);
+        res.json(teamId);
+      });
+    }
+  );
 
-  keyValidator([
-    "date",
-    "location",
-    "outcome",
-    "roster",
-    "position",
-    "winnings"
-  ]),
-  validateEvent,
-  (req, res, next) => {
-    const { date, location, outcome, roster, position, winnings } = req.body;
-    const newEvent = {
-      date: date,
-      location: location,
-      outcome: outcome,
-      roster: roster,
-      position: position,
-      winnings: winnings
-    };
-    teamsService.addEvent(newEvent, req.params.team_code);
-    res.json(teamsService.getTeam(req.params.team_code).history);
-  }
-);
+teamsRouter.route("/locations").get((req, res, next) => {
+  teamsService.getLocations(req.app.get("db")).then(locations => {
+    const locationNames = locations.map(location => location.locationname);
+    res.json(locationNames);
+  });
+});
 
 function validateTeamNoExists(req, res, next) {
   teamsService.doesExist(req.app.get("db"), req.body.teamcode).then(team => {

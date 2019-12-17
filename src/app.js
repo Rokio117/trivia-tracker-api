@@ -12,11 +12,12 @@ const morganOption = NODE_ENV === "production" ? "tiny" : "common";
 
 const teamsRouter = require("./teams/teams");
 const usersRouter = require("./users/users");
+const joinsRouter = require("./teams/joins");
 
 app.use(morgan(morganOption));
 app.use(helmet());
 app.use(cors({ origin: CLIENT_ORIGIN }));
-
+app.use("/api/joins", joinsRouter);
 app.use("/api/teams", teamsRouter);
 app.use("/api/users", usersRouter);
 app.get("/api/", (req, res) => {
