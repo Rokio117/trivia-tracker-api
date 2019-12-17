@@ -146,6 +146,7 @@ const helpers = {
   },
   teamWithNewWinnings() {
     return {
+      id: 1,
       teamname: "Well Win Again Someday",
       teamcode: "password",
       wins: 6,
@@ -153,6 +154,16 @@ const helpers = {
       secondplace: 2,
       thirdplace: 1,
       winnings: 5000
+    };
+  },
+  testEvent() {
+    return {
+      date: "12/12/12",
+      location: "Dave and Busters",
+      outcome: "Win",
+      roster: ["Rokio", "Jen", "Ash"],
+      position: "1st",
+      winnings: 205
     };
   }
 };

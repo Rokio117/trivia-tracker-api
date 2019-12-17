@@ -139,13 +139,23 @@ describe.only("Users Endpoints", function() {
       });
     });
   });
-  describe.only(`test /api/:team_code/winnings`, () => {
+  describe(`test /api/:team_code/winnings`, () => {
     context(`PATCH /:team_code/names`, () => {
       it("Changes the winnings for the team", () => {
         return supertest(app)
-          .post(`/api/teams/${testTeam.teamcode}/winnings`)
+          .patch(`/api/teams/${testTeam.teamcode}/winnings`)
           .send({ winnings: 5000 })
           .expect([teamWithNewWinnings]);
+      });
+    });
+  });
+  describe(`test /api/teams/:team_code/event`, () => {
+    context(`post /:team_code/event`, () => {
+      it("Enters event and returns event object", () => {
+        return supertest(app)
+          .post(`/api/teams/${testTeam.teamcode}/event`)
+          .send()
+          .expect();
       });
     });
   });
