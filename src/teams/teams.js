@@ -216,14 +216,17 @@ teamsRouter
         );
         let teamId;
         if (locationNames.includes(newEvent.location)) {
-          teamId = teamsService.getLocationId(req.app.get("db"), locations);
+          teamId = teamsService.getLocationId(
+            req.app.get("db"),
+            newEvent.location
+          );
         } else
           teamid = teamsService.postNewLocation(
             req.app.get("db"),
             newEvent.location
           );
 
-        console.log(teamId);
+        console.log(typeof teamId, "teamId");
         res.json(teamId);
       });
     }
@@ -234,6 +237,22 @@ teamsRouter.route("/locations").get((req, res, next) => {
     const locationNames = locations.map(location => location.locationname);
     res.json(locationNames);
   });
+});
+teamsRouter.route("/locations/:name").get((req, res, next) => {
+  teamsService
+    .getLocationId(req.app.get("db"), req.params.name)
+    .then(result => {
+      const id = result[0].id;
+      res.json(id);
+    });
+});
+teamsRouter.route("/locations").post((req, res, next) => {
+  teamsService
+    .postNewLocation(req.app.get("db"), req.body.location)
+    .then(result => {
+      console.log(result);
+      res.json(result[0]);
+    });
 });
 
 function validateTeamNoExists(req, res, next) {

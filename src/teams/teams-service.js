@@ -167,12 +167,14 @@ const teamsService = {
       });
   },
   getLocationId(knex, location) {
+    console.log("getLocationIdran", location);
     return knex
       .select("id")
       .from("trivia_locations")
       .where({ locationname: location });
   },
   postNewLocation(knex, newLocation) {
+    console.log("postNewLocation ran", newLocation);
     return knex
       .insert({ locationname: newLocation })
       .into("trivia_locations")
