@@ -210,6 +210,12 @@ teamsRouter
         position: position,
         winnings: winnings
       };
+      // teamsService
+      //   .handleLocation(req.app.get("db"), newEvent.location)
+      //   .then(id => {
+      //     console.log(id, "id after handleLocation");
+      //     res.json(id);
+      //   });
       teamsService.getLocations(req.app.get("db")).then(locations => {
         let locationNames = locations.map(
           locationObject => locationObject.locationname
@@ -232,8 +238,10 @@ teamsRouter
               return newid;
             });
         }
-        console.log(teamId);
-        res.json(teamId);
+        teamId.then(id => {
+          console.log(id, "id in the then of teamId");
+          res.json(id);
+        });
       });
     }
   );

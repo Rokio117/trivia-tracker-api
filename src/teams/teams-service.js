@@ -187,6 +187,19 @@ const teamsService = {
         console.log(result, "result in postNewLocation");
         return result;
       });
+  },
+
+  handleLocation(knex, location) {
+    return this.getLocations(knex).then(locations => {
+      const locationNames = locations.map(
+        locationObject => locationObject.locationname
+      );
+      if (locationNames.includes(location)) {
+        return this.getLocationId(knex, location);
+      } else {
+        return this.postNewLocation(knex, location);
+      }
+    });
   }
 };
 
