@@ -220,23 +220,19 @@ teamsRouter
             .getLocationId(req.app.get("db"), newEvent.location)
             .then(idObject => {
               const id = idObject[0].id;
-
-              console.log("id in if statement", id);
               return id;
             })
-            .then(teamId => {
-              teamId = teamId;
+            .then(id => {
+              teamId = id;
             });
         } else {
           teamsService
             .postNewLocation(req.app.get("db"), newEvent.location)
             .then(id => {
-              console.log(id[0], "id in else statement");
               const newid = id[0];
               return newid;
             })
             .then(id => {
-              console.log(teamId, "teamid in then block of else block");
               teamId = id;
             });
         }
