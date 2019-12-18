@@ -216,22 +216,23 @@ teamsRouter
         );
         let teamId;
         if (locationNames.includes(newEvent.location)) {
-          teamId = teamsService
+          teamsService
             .getLocationId(req.app.get("db"), newEvent.location)
             .then(idObject => {
               const id = idObject[0].id;
+
               console.log("id in if statement", id);
-              return id;
+              return (teamId = id);
             });
-        } else
-          teamid = teamsService
+        } else {
+          teamId = teamsService
             .postNewLocation(req.app.get("db"), newEvent.location)
             .then(id => {
               console.log(id[0], "id in else statement");
-              return id[0];
+              return (teamId = id[0]);
             });
-
-        console.log(typeof teamId, "teamId");
+        }
+        console.log(teamId);
         res.json(teamId);
       });
     }
