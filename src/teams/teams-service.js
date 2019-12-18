@@ -171,14 +171,22 @@ const teamsService = {
     return knex
       .select("id")
       .from("trivia_locations")
-      .where({ locationname: location });
+      .where({ locationname: location })
+      .then(id => {
+        console.log(id, "id in getLocationId");
+        return id;
+      });
   },
   postNewLocation(knex, newLocation) {
     console.log("postNewLocation ran", newLocation);
     return knex
       .insert({ locationname: newLocation })
       .into("trivia_locations")
-      .returning("id");
+      .returning("id")
+      .then(result => {
+        console.log(result, "result in postNewLocation");
+        return result;
+      });
   }
 };
 
