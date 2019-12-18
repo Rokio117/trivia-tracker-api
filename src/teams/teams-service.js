@@ -172,8 +172,8 @@ const teamsService = {
       .select("id")
       .from("trivia_locations")
       .where({ locationname: location })
-      .then(id => {
-        console.log(id, "id in getLocationId");
+      .then(objectId => {
+        const id = objectId[0].id;
         return id;
       });
   },
@@ -183,13 +183,13 @@ const teamsService = {
       .insert({ locationname: newLocation })
       .into("trivia_locations")
       .returning("id")
-      .then(result => {
-        console.log(result, "result in postNewLocation");
-        return result;
+      .then(idArray => {
+        const id = idArray[0];
+        return id;
       });
   },
 
-  handleLocation(knex, location) {
+  findOrInsertLocation(knex, location) {
     return this.getLocations(knex).then(locations => {
       const locationNames = locations.map(
         locationObject => locationObject.locationname
@@ -200,6 +200,53 @@ const teamsService = {
         return this.postNewLocation(knex, location);
       }
     });
+  },
+  findOrInsertEvent(knex, event) {
+    return this.getevents(knex).then(events => {
+      const locationCompare = events.map(
+        pastEvent => {
+          const dateAndLocation = {
+            eventdate: pastEvent.eventdate,
+            eventlocation: pastEvent.eventlocation
+          };
+          if (
+            pastEvent.eventdate === event.eventdate &&
+            pastEvent.eventlocation === event.eventlocation
+          ) {
+            return true;
+          } else return false;
+        }
+
+        // return knex
+        //   .into("trivia_events")
+        //   .insert(event)
+        //   .returning("id");
+      );
+      console.log(locationCompare.includes(true));
+      if (locationCompare.includes(true)) {
+        return knex
+          .select("id")
+          .from("trivia_events")
+          .where({
+            eventdate: event.eventdate,
+            eventlocation: event.eventlocation
+          })
+          .then(idArray => {
+            return idArray[0].id;
+          });
+      } else {
+        return knex
+          .insert(event)
+          .into("trivia_events")
+          .returning("id")
+          .then(nestedId => {
+            return nestedId[0];
+          });
+      }
+    });
+  },
+  getevents(knex) {
+    return knex.select("*").from("trivia_events");
   }
 };
 

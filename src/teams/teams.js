@@ -202,47 +202,44 @@ teamsRouter
     validateEvent,
     (req, res, next) => {
       const { date, location, outcome, roster, position, winnings } = req.body;
-      const newEvent = {
-        date: date,
-        location: location,
-        outcome: outcome,
-        roster: roster,
-        position: position,
-        winnings: winnings
-      };
-      // teamsService
-      //   .handleLocation(req.app.get("db"), newEvent.location)
-      //   .then(id => {
-      //     console.log(id, "id after handleLocation");
+
+      teamsService
+        .findOrInsertLocation(req.app.get("db"), location)
+        .then(id => {
+          const event = { eventdate: date, eventlocation: id };
+          teamsService
+            .findOrInsertEvent(req.app.get("db"), event)
+            .then(eventId => {
+              res.json(eventId);
+            });
+        });
+      // teamsService.getLocations(req.app.get("db")).then(locations => {
+      //   let locationNames = locations.map(
+      //     locationObject => locationObject.locationname
+      //   );
+      //   let teamId;
+      //   if (locationNames.includes(newEvent.location)) {
+      //     teamId = teamsService
+      //       .getLocationId(req.app.get("db"), newEvent.location)
+      //       .then(idObject => {
+      //         const id = idObject[0].id;
+      //         console.log(id, "id in then block of if statement");
+      //         return id;
+      //       });
+      //   } else {
+      //     teamId = teamsService
+      //       .postNewLocation(req.app.get("db"), newEvent.location)
+      //       .then(id => {
+      //         const newid = id[0];
+      //         console.log(id, "id in then block of else statement");
+      //         return newid;
+      //       });
+      //   }
+      //   teamId.then(id => {
+      //     console.log(id, "id in the then of teamId");
       //     res.json(id);
       //   });
-      teamsService.getLocations(req.app.get("db")).then(locations => {
-        let locationNames = locations.map(
-          locationObject => locationObject.locationname
-        );
-        let teamId;
-        if (locationNames.includes(newEvent.location)) {
-          teamId = teamsService
-            .getLocationId(req.app.get("db"), newEvent.location)
-            .then(idObject => {
-              const id = idObject[0].id;
-              console.log(id, "id in then block of if statement");
-              return id;
-            });
-        } else {
-          teamId = teamsService
-            .postNewLocation(req.app.get("db"), newEvent.location)
-            .then(id => {
-              const newid = id[0];
-              console.log(id, "id in then block of else statement");
-              return newid;
-            });
-        }
-        teamId.then(id => {
-          console.log(id, "id in the then of teamId");
-          res.json(id);
-        });
-      });
+      // });
     }
   );
 
