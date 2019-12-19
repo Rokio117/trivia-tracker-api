@@ -12,6 +12,7 @@ const { validateTeamExists } = require("../middleware");
 const { serverError } = require("../middleware");
 const { validateEvent } = require("./teams-validators");
 const joinsPractice = require("./joins-practice");
+const { checkForDuplicateEvent } = require("./teams-validators");
 teamsRouter.use(jsonBodyParser);
 teamsRouter.use(validateBodyTypes);
 
@@ -200,48 +201,114 @@ teamsRouter
       "winnings"
     ]),
     validateEvent,
+    checkForDuplicateEvent,
     (req, res, next) => {
       const { date, location, outcome, roster, position, winnings } = req.body;
 
-      teamsService
-        .findOrInsertLocation(req.app.get("db"), location)
-        .then(id => {
-          const event = { eventdate: date, eventlocation: id };
-          teamsService
-            .findOrInsertEvent(req.app.get("db"), event)
-            .then(eventId => {
-              res.json(eventId);
-            });
-        });
-      // teamsService.getLocations(req.app.get("db")).then(locations => {
-      //   let locationNames = locations.map(
-      //     locationObject => locationObject.locationname
-      //   );
-      //   let teamId;
-      //   if (locationNames.includes(newEvent.location)) {
-      //     teamId = teamsService
-      //       .getLocationId(req.app.get("db"), newEvent.location)
-      //       .then(idObject => {
-      //         const id = idObject[0].id;
-      //         console.log(id, "id in then block of if statement");
-      //         return id;
-      //       });
-      //   } else {
-      //     teamId = teamsService
-      //       .postNewLocation(req.app.get("db"), newEvent.location)
-      //       .then(id => {
-      //         const newid = id[0];
-      //         console.log(id, "id in then block of else statement");
-      //         return newid;
-      //       });
-      //   }
-      //   teamId.then(id => {
-      //     console.log(id, "id in the then of teamId");
-      //     res.json(id);
-      //   });
-      // });
+      teamsService.getLocationId(req.app.get("db"), location).then(id => {
+        const event = { eventdate: date, eventlocation: id };
+        teamsService
+          .findOrInsertEvent(req.app.get("db"), event)
+          .then(eventId => {
+            const newResult = {
+              event_id: eventId,
+              winnings: winnings,
+              outcome: outcome,
+              position: position
+            };
+            teamsService
+              .postResult(req.app.get("db"), newResult, req.params.team_code)
+              .then(resultId => {
+                usersService
+                  .getUsersIds(req.app.get("db"), roster)
+                  .then(ids => {
+                    teamsService
+                      .postAttendees(
+                        req.app.get("db"),
+                        ids,
+                        req.params.team_code,
+                        eventId
+                      )
+                      .then(attendeeIds => {
+                        const eventIds = { eventId, resultId, attendeeIds };
+                        //change numbers for wins,firstplace,secondplace,thirdplace,and winnings
+                        teamsService
+                          .getTeam(req.app.get("db"), req.params.team_code)
+                          .then(teamArray => {
+                            const teamObject = teamArray[0];
+                            console.log(
+                              teamObject,
+                              "teamobject at begining of function"
+                            );
+                            let {
+                              wins,
+                              firstplace,
+                              secondplace,
+                              thirdplace,
+                              winnings
+                            } = teamObject;
+
+                            if (req.body.position === "1st") {
+                              firstplace++;
+                            }
+                            if (req.body.position === "2nd") {
+                              secondplace++;
+                            }
+                            if (req.body.position === "3rd") {
+                              thirdplace++;
+                            }
+
+                            winnings = winnings + req.body.winnings;
+                            if (req.body.outcome === "Win") {
+                              wins++;
+                            }
+                            const newStandings = {
+                              wins: wins,
+                              firstplace: firstplace,
+                              secondplace: secondplace,
+                              thirdplace: thirdplace,
+                              winnings: winnings
+                            };
+                            console.log(
+                              newStandings,
+                              "newstandings at the end of the function"
+                            );
+                            teamsService
+                              .patchTeamStandings(
+                                req.app.get("db"),
+                                newStandings,
+                                req.params.team_code
+                              )
+                              .then(updatedTeam => {
+                                console.log(updatedTeam);
+                                const formattedTeam = updatedTeam[0];
+                                const response = {
+                                  ...formattedTeam,
+                                  eventId: eventId,
+                                  resultId: resultId,
+                                  attendeeIds: attendeeIds
+                                };
+                                //make function that can construct a team
+                                //in the format it appears in in store
+                                //then return it
+                                res.json(response);
+                              });
+                          });
+                      });
+                  });
+              });
+          });
+      });
     }
   );
+
+teamsRouter
+  .route("/:team_code/info")
+  .get(validateTeamExists, (req, res, next) => {
+    teamsService
+      .getFullTeamInfo(req.app.get("db"), req.params.team_code)
+      .then(result => res.json(result));
+  });
 
 teamsRouter.route("/locations").get((req, res, next) => {
   teamsService.getLocations(req.app.get("db")).then(locations => {
@@ -249,6 +316,7 @@ teamsRouter.route("/locations").get((req, res, next) => {
     res.json(locationNames);
   });
 });
+
 teamsRouter.route("/locations/:name").get((req, res, next) => {
   teamsService
     .getLocationId(req.app.get("db"), req.params.name)
@@ -257,6 +325,7 @@ teamsRouter.route("/locations/:name").get((req, res, next) => {
       res.json(id);
     });
 });
+
 teamsRouter.route("/locations").post((req, res, next) => {
   teamsService
     .postNewLocation(req.app.get("db"), req.body.location)
@@ -264,6 +333,33 @@ teamsRouter.route("/locations").post((req, res, next) => {
       console.log(result);
       res.json(result[0]);
     });
+});
+teamsRouter.route("/ids").get((req, res, next) => {
+  usersService.getUsersIds(req.app.get("db"), req.body.roster).then(result => {
+    res.json(result);
+  });
+});
+teamsRouter.route("/:team_code/events/test").get((req, res, next) => {
+  teamsService
+    .getAllEventsForTeam(req.app.get("db"), req.params.team_code)
+    .then(eventList => {
+      res.json(eventList);
+    });
+});
+teamsRouter.route("/members/test").get((req, res, next) => {
+  teamsService.getMembersAndRoles(req.app.get("db"), 1).then(result => {
+    res.json(result);
+  });
+});
+teamsRouter.route("/history/test").get((req, res, next) => {
+  teamsService
+    .getHistory(req.app.get("db"), 1)
+    .then(result => res.json(result));
+});
+teamsRouter.route("/attendees/test").get((req, res, next) => {
+  teamsService
+    .getAttendees(req.app.get("db"), [1, 2])
+    .then(result => res.json(result));
 });
 
 function validateTeamNoExists(req, res, next) {

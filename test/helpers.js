@@ -158,12 +158,27 @@ const helpers = {
   },
   testEvent() {
     return {
-      date: "12/12/12",
-      location: "Dave and Busters",
+      date: "2020-01-01",
+      location: "Paddys Pub",
       outcome: "Win",
       roster: ["Rokio", "Jen", "Ash"],
       position: "1st",
-      winnings: 205
+      winnings: 30
+    };
+  },
+  expectedEventObject() {
+    return {
+      id: 1,
+      teamcode: "password",
+      teamname: "Well Win Again Someday",
+      wins: 7,
+      firstplace: 4,
+      secondplace: 2,
+      thirdplace: 1,
+      winnings: 425,
+      eventId: 14,
+      resultId: 15,
+      attendeeIds: [46, 47, 48]
     };
   }
 };

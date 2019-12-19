@@ -13,6 +13,16 @@ const teamsService = {
   getAllTeams(knex) {
     return knex.select("*").from("trivia_teams");
   },
+  getAllEventsForTeam(knex, teamcode) {
+    console.log(teamcode, "teamcode in getalleventsforteam");
+    return this.getTeamId(knex, teamcode).then(teamId => {
+      return knex
+        .select("eventdate", "eventlocation")
+        .from("trivia_results")
+        .join("trivia_events", "trivia_results.event_id", "trivia_events.id")
+        .where("trivia_results.team_id", teamId);
+    });
+  },
   getTeam(knex, teamcode) {
     return knex
       .select("*")
@@ -24,6 +34,15 @@ const teamsService = {
       .select("*")
       .from("trivia_teams")
       .where({ id: teamId });
+  },
+  getTeamId(knex, teamcode) {
+    return knex
+      .select("id")
+      .from("trivia_teams")
+      .where({ teamcode: teamcode })
+      .then(id => {
+        return id[0].id;
+      });
   },
   getTeamMembers(knex, teamcode) {
     console.log("getteammembers ran");
@@ -136,28 +155,19 @@ const teamsService = {
       .update({ teamname: newTeamName })
       .returning("*");
   },
-  addEvent(event, teamcode) {
-    const winnings =
-      parseInt(store.teams.find(team => team.teamcode === teamcode).winnings) +
-      parseInt(event.winnings);
-    store.teams.find(team => team.teamcode === teamcode).history.unshift(event);
-    console.log("winnings in store.addEvent", winnings, typeof winnings);
-    store.teams.find(team => team.teamcode === teamcode).winnings = winnings;
-
-    if (event.outcome === "Win") {
-      const position = event.position;
-      store.teams.find(team => team.teamcode === teamcode).wins++;
-      if (position === "1st") {
-        store.teams.find(team => team.teamcode === teamcode).firstPlace++;
-      }
-      if (position === "2nd") {
-        store.teams.find(team => team.teamcode === teamcode).secondPlace++;
-      }
-      if (position === "3rd") {
-        store.teams.find(team => team.teamcode === teamcode).thirdPlace++;
-      }
-    }
+  patchTeamStandings(knex, newStandings, teamcode) {
+    return knex("trivia_teams")
+      .where({ teamcode: teamcode })
+      .update({
+        wins: newStandings.wins,
+        firstplace: newStandings.firstplace,
+        secondplace: newStandings.secondplace,
+        thirdplace: newStandings.thirdplace,
+        winnings: newStandings.winnings
+      })
+      .returning("*");
   },
+
   getLocations(knex) {
     return knex
       .select("*")
@@ -247,6 +257,131 @@ const teamsService = {
   },
   getevents(knex) {
     return knex.select("*").from("trivia_events");
+  },
+
+  postResult(knex, result, teamcode) {
+    return this.getTeamId(knex, teamcode).then(teamId => {
+      result.team_id = teamId;
+      return knex
+
+        .insert(result)
+        .into("trivia_results")
+        .returning("id")
+        .then(id => {
+          console.log(id);
+          return id[0];
+        });
+    });
+  },
+
+  postAttendees(knex, attendees, teamcode, eventId) {
+    console.log("event id in post attendees", eventId);
+    return this.getTeamId(knex, teamcode).then(teamId => {
+      const attendeeList = attendees.map(attendee => {
+        return {
+          team_id: teamId,
+          player_id: attendee,
+          event_id: eventId
+        };
+      });
+      console.log(attendeeList, "attendeelist in postAttendees");
+      return knex
+        .insert(attendeeList)
+        .into("trivia_attendees")
+        .returning("id");
+    });
+  },
+  getFullTeamInfo(knex, teamcode) {
+    return this.getTeam(knex, teamcode).then(teaminfoarray => {
+      const teamBasicInfo = teaminfoarray[0];
+      this.getMembersAndRoles(knex, teamBasicInfo.id).then(roster => {
+        this.getHistory(knex, teamBasicInfo.id).then(history => {
+          const eventIds = history.map(history => history.id);
+          this.getAttendees(knex, eventIds, teamBasicInfo.id).then(
+            attendeesList => {
+              console.log(attendeesList, "attendeesList after getAttendees");
+              const fullHistory = history.map(event => {
+                const newHistory = Object.assign(event, { roster: [] });
+                return newHistory;
+              });
+              fullHistory.forEach(history => {
+                attendeesList.forEach(attendeeObject => {
+                  if (attendeeObject.event_id === history.id) {
+                    history.roster.push(attendeeObject.username);
+                  }
+                });
+              });
+
+              console.log("fullHistory", fullHistory);
+              return fullHistory;
+            }
+          );
+        });
+      });
+    });
+  },
+  getMembersAndRoles(knex, teamId) {
+    return knex
+      .select("username", "role")
+      .from("members")
+      .join("trivia_players", "members.player_id", "trivia_players.id")
+      .where("members.team_id", teamId)
+      .then(result => {
+        console.log(result, "result of getMembersAndRoles");
+        return result;
+      });
+  },
+  getHistory(knex, teamId) {
+    return (
+      knex
+        .select(
+          "eventdate",
+          "locationname",
+          "outcome",
+          "position",
+          "winnings",
+          "trivia_events.id"
+        )
+        //.select("*")
+        .from("trivia_results")
+        .join("trivia_events", "trivia_results.event_id", "trivia_events.id")
+        .join(
+          "trivia_locations",
+          "trivia_events.eventlocation",
+          "trivia_locations.id"
+        )
+        .join(
+          "trivia_attendees",
+          "trivia_events.id",
+          "trivia_attendees.event_id"
+        )
+        .join(
+          "trivia_players",
+          "trivia_attendees.player_id",
+          "trivia_players.id"
+        )
+        .where("trivia_results.team_id", teamId)
+        .distinct()
+        .then(results => {
+          console.log(results, "results of monster join");
+          return results;
+        })
+    );
+  },
+
+  getAttendees(knex, eventIds, teamId) {
+    return knex
+      .select("username", "event_id")
+      .from("trivia_players")
+      .join(
+        "trivia_attendees",
+        "trivia_players.id",
+        "trivia_attendees.player_id"
+      )
+      .where("trivia_attendees.team_id", teamId)
+      .whereIn("trivia_attendees.event_id", eventIds)
+
+      .distinct();
   }
 };
 

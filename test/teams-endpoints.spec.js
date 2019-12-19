@@ -149,13 +149,13 @@ describe.only("Users Endpoints", function() {
       });
     });
   });
-  describe(`test /api/teams/:team_code/event`, () => {
-    context(`post /:team_code/event`, () => {
+  describe.only(`test /api/teams/:team_code/event`, () => {
+    context.only(`post /:team_code/event`, () => {
       it("Enters event and returns event object", () => {
         return supertest(app)
           .post(`/api/teams/${testTeam.teamcode}/event`)
-          .send()
-          .expect();
+          .send(helpers.testEvent())
+          .expect(helpers.expectedEventObject());
       });
     });
   });

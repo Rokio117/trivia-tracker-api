@@ -22,6 +22,17 @@ const usersService = {
       .from("trivia_players")
       .where({ username: username });
   },
+  getUsersIds(knex, userList) {
+    return knex
+      .select("id")
+      .from("trivia_players")
+      .whereIn("username", userList)
+      .then(ids => {
+        console.log(ids);
+        const formattedIds = ids.map(id => id.id);
+        return formattedIds;
+      });
+  },
 
   getNameFromUsername(knex, username) {
     return knex

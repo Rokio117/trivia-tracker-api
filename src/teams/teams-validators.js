@@ -1,5 +1,5 @@
 const userService = require("../users/users-service");
-
+const teamsService = require("./teams-service");
 function validateEvent(req, res, next) {
   console.log("validateEvent ran");
 
@@ -49,7 +49,40 @@ function validateEvent(req, res, next) {
   next();
 }
 
+function checkForDuplicateEvent(req, res, next) {
+  const { date, location } = req.body;
+  const newEvent = {
+    eventdate: date,
+    eventlocation: location
+  };
+  teamsService
+    .findOrInsertLocation(req.app.get("db"), location)
+    .then(locationId => {
+      teamsService
+        .getAllEventsForTeam(req.app.get("db"), req.params.team_code)
+        .then(eventList => {
+          eventList.forEach(event => {
+            console.log(event.eventdate === newEvent.eventdate);
+            console.log(event.eventlocation === locationId);
+            const matchingDates = event.eventdate === newEvent.eventdate;
+            const matchingLocations = event.eventlocation === locationId;
+            if (matchingDates && matchingLocations) {
+              console.log("if statement returnd true");
+              let err = new Error(
+                `Event with date '${newEvent.eventdate}' and location '${newEvent.eventlocation}' already exists`
+              );
+              err.status = 400;
+              return next(err);
+            }
+          });
+          console.log("bottom next ran");
+          return next();
+        });
+    });
+}
+
 module.exports = {
-  validateEvent
+  validateEvent,
+  checkForDuplicateEvent
 };
 //module.exports = validatePatchTeamCodeTeam;
