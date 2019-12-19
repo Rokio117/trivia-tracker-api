@@ -294,30 +294,43 @@ const teamsService = {
   getFullTeamInfo(knex, teamcode) {
     return this.getTeam(knex, teamcode).then(teaminfoarray => {
       const teamBasicInfo = teaminfoarray[0];
-      this.getMembersAndRoles(knex, teamBasicInfo.id).then(roster => {
-        this.getHistory(knex, teamBasicInfo.id).then(history => {
-          const eventIds = history.map(history => history.id);
-          this.getAttendees(knex, eventIds, teamBasicInfo.id).then(
-            attendeesList => {
-              console.log(attendeesList, "attendeesList after getAttendees");
+      return this.getMembersAndRoles(knex, teamBasicInfo.id).then(
+        teamMembers => {
+          return this.getHistory(knex, teamBasicInfo.id).then(history => {
+            const eventIds = history.map(history => history.id);
+            return this.getAttendees(knex, eventIds).then(attendeesList => {
+              const teamAttendees = [];
+              attendeesList.forEach(attendee => {
+                if (attendee.team_id === teamBasicInfo.id) {
+                  teamAttendees.push({
+                    username: attendee.username,
+                    event_id: attendee.event_id
+                  });
+                }
+              });
+
               const fullHistory = history.map(event => {
                 const newHistory = Object.assign(event, { roster: [] });
                 return newHistory;
               });
               fullHistory.forEach(history => {
-                attendeesList.forEach(attendeeObject => {
+                teamAttendees.forEach(attendeeObject => {
                   if (attendeeObject.event_id === history.id) {
                     history.roster.push(attendeeObject.username);
                   }
                 });
               });
 
-              console.log("fullHistory", fullHistory);
-              return fullHistory;
-            }
-          );
-        });
-      });
+              const fullTeamInfo = {
+                ...teamBasicInfo,
+                members: teamMembers,
+                history: fullHistory
+              };
+              return fullTeamInfo;
+            });
+          });
+        }
+      );
     });
   },
   getMembersAndRoles(knex, teamId) {
@@ -369,16 +382,16 @@ const teamsService = {
     );
   },
 
-  getAttendees(knex, eventIds, teamId) {
+  getAttendees(knex, eventIds) {
     return knex
-      .select("username", "event_id")
+      .select("username", "event_id", "team_id")
       .from("trivia_players")
       .join(
         "trivia_attendees",
         "trivia_players.id",
         "trivia_attendees.player_id"
       )
-      .where("trivia_attendees.team_id", teamId)
+
       .whereIn("trivia_attendees.event_id", eventIds)
 
       .distinct();

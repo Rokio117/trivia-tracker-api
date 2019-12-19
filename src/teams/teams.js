@@ -13,8 +13,10 @@ const { serverError } = require("../middleware");
 const { validateEvent } = require("./teams-validators");
 const joinsPractice = require("./joins-practice");
 const { checkForDuplicateEvent } = require("./teams-validators");
+const { requireAuth } = require("../basic-auth");
 teamsRouter.use(jsonBodyParser);
 teamsRouter.use(validateBodyTypes);
+//teamsRouter.use(requireAuth)
 
 teamsRouter
   .route("/")
