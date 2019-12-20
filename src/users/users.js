@@ -95,7 +95,13 @@ usersRouter
 //       });
 //     });
 //   });
-
+usersRouter.route("/:user_name/exists").get((req, res, next) => {
+  userService
+    .userExists(req.app.get("db"), req.params.user_name)
+    .then(response => {
+      res.json(response);
+    });
+});
 usersRouter
   .route("/:user_name/teams")
   .get(validateUserExists, (req, res, next) => {
