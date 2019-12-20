@@ -64,6 +64,12 @@ teamsRouter
   );
 //teamsRouter.route("/:team_code/*").get(validateTeamcode);
 //teamsRouter.route("/:team_code/*").all(validateTeamcode);
+
+teamsRouter.route("/:team_code/exists").get((req, res, next) => {
+  teamsService.doesExist(req.app.get("db"), req.params.team_code).then(id => {
+    res.json(id);
+  });
+});
 teamsRouter
   .route("/:team_code/team")
   .get(validateTeamExists, (req, res, next) => {

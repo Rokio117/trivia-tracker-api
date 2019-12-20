@@ -70,6 +70,11 @@ const usersService = {
       });
   },
   changePlayerName(knex, newName, username) {
+    console.log(
+      newName,
+      username,
+      "newName and username in change player name"
+    );
     return knex("trivia_players")
       .where({ username })
       .update({ nickname: newName })
