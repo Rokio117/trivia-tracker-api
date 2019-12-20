@@ -163,9 +163,12 @@ teamsRouter
   .get(validateTeamExists, (req, res, next) => {
     teamsService
       .getTeamMembers(req.app.get("db"), req.params.team_code)
-      .then(usernames => {
+      .then(usernamesAndNicknames => {
+        const usernamesOnly = usernamesAndNicknames.map(memberobject => {
+          return memberobject.username;
+        });
         teamsService
-          .getNamedMembersOfTeam(req.app.get("db"), usernames)
+          .getNamedMembersOfTeam(req.app.get("db"), usernamesOnly)
           .then(nicknames => {
             const nicknameList = nicknames.map(nickname => nickname.nickname);
             res.json(nicknameList);
@@ -349,7 +352,7 @@ teamsRouter.route("/:team_code/events/test").get((req, res, next) => {
     });
 });
 teamsRouter.route("/members/test").get((req, res, next) => {
-  teamsService.getMembersAndRoles(req.app.get("db"), 1).then(result => {
+  teamsService.getMembersAndRoles(req.app.get("db"), 4).then(result => {
     res.json(result);
   });
 });

@@ -16,7 +16,8 @@ const joinsRouter = require("./teams/joins");
 
 app.use(morgan(morganOption));
 app.use(helmet());
-app.use(cors({ origin: CLIENT_ORIGIN }));
+//app.use(cors({ origin: CLIENT_ORIGIN }));
+app.use(cors());
 app.use("/api/joins", joinsRouter);
 app.use("/api/teams", teamsRouter);
 app.use("/api/users", usersRouter);

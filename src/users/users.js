@@ -83,13 +83,44 @@ usersRouter
       });
   });
 
+// usersRouter
+//   .route("/:user_name/teams")
+//   .get(validateUserExists, (req, res, next) => {
+//     userService.getUserId(req.app.get("db"), req.params.user_name).then(id => {
+//       userService.getUserTeams(req.app.get("db"), id[0].id).then(teamIds => {
+//         userService.getTeamInfo(req.app.get("db"), teamIds).then(result => {
+//           //returns array of team objects(objects do not have history or members)
+//           res.json(result);
+//         });
+//       });
+//     });
+//   });
+
 usersRouter
   .route("/:user_name/teams")
   .get(validateUserExists, (req, res, next) => {
     userService.getUserId(req.app.get("db"), req.params.user_name).then(id => {
       userService.getUserTeams(req.app.get("db"), id[0].id).then(teamIds => {
-        userService.getTeamInfo(req.app.get("db"), teamIds).then(result => {
-          res.json(result);
+        userService.getTeamInfo(req.app.get("db"), teamIds).then(teamInfo => {
+          //returns array of team objects(objects do not have history or members)
+
+          // const teamcodes = teamInfo.map(team=>team.teamcode)
+
+          // for(let team = 0; team < teamcodes.length; team++){
+          //   teamService.getFullTeamInfo(req.app.get("db"),teamcodes[team]).then(teamInfo=>{
+
+          //   })
+          // }
+
+          const fullTeamInfoForPlayer = teamInfo.map(team => {
+            const teamcode = team.teamcode;
+            return teamService.getFullTeamInfo(req.app.get("db"), teamcode);
+          });
+
+          Promise.all(fullTeamInfoForPlayer).then(result => {
+            res.json(result);
+          });
+          //fullTeamInfoForPlayer is a list of promises
         });
       });
     });

@@ -59,14 +59,18 @@ const teamsService = {
           .where({ team_id })
           .then(players => {
             const playerIds = players.map(player => player.player_id);
-            return knex
-              .select("username")
-              .from("trivia_players")
-              .whereIn("id", playerIds)
-              .then(playerIds => {
-                const userNames = playerIds.map(id => id.username);
-                return userNames;
-              });
+            return (
+              knex
+                .select("username", "nickname", "role")
+                //add join to members to get role
+                .from("trivia_players")
+                .join("members", "trivia_players.id", "members.player_id")
+                .whereIn("trivia_players.id", playerIds)
+                .distinct()
+                .then(members => {
+                  return members;
+                })
+            );
           });
       });
   },
@@ -326,6 +330,7 @@ const teamsService = {
                 members: teamMembers,
                 history: fullHistory
               };
+
               return fullTeamInfo;
             });
           });
@@ -335,7 +340,7 @@ const teamsService = {
   },
   getMembersAndRoles(knex, teamId) {
     return knex
-      .select("username", "role")
+      .select("username", "role", "nickname")
       .from("members")
       .join("trivia_players", "members.player_id", "trivia_players.id")
       .where("members.team_id", teamId)
