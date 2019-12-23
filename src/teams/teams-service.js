@@ -153,7 +153,7 @@ const teamsService = {
       .update({ winnings: winnings })
       .returning("*");
   },
-  changeTeamName: (knex, newTeamName, teamcode) => {
+  changeTeamName(knex, newTeamName, teamcode) {
     return knex("trivia_teams")
       .where({ teamcode: teamcode })
       .update({ teamname: newTeamName })

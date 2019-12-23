@@ -14,6 +14,7 @@ const { validateEvent } = require("./teams-validators");
 const joinsPractice = require("./joins-practice");
 const { checkForDuplicateEvent } = require("./teams-validators");
 const { requireAuth } = require("../basic-auth");
+const { validateDuplicateTeammate } = require("../middleware");
 teamsRouter.use(jsonBodyParser);
 teamsRouter.use(validateBodyTypes);
 //teamsRouter.use(requireAuth)
@@ -105,7 +106,7 @@ teamsRouter
   .post(
     validateTeamExists,
     validateUserExists,
-
+    validateDuplicateTeammate,
     keyValidator(["username", "role"]),
     validateRole,
     (req, res, next) => {

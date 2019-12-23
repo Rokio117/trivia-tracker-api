@@ -132,10 +132,26 @@ function serverError(err, req, res, next) {
     error: message
   });
 }
+
+function validateDuplicateTeammate(req, res, next) {
+  const user = req.body.username;
+  teamsService
+    .getTeamMembers(req.app.get("db"), req.params.team_code)
+    .then(members => {
+      const memberUserNames = members.map(member => member.username);
+      if (memberUserNames.includes(user)) {
+        let err = new Error("Player is already on team");
+        err.status = 406;
+        return next(err);
+      }
+      next();
+    });
+}
 module.exports = {
   validateBodyTypes,
   keyValidator,
   validateUserExists,
   validateTeamExists,
-  serverError
+  serverError,
+  validateDuplicateTeammate
 };
