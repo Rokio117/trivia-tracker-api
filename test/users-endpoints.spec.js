@@ -5,7 +5,7 @@ const { seedData } = require("./seedData");
 const { cleanTables } = require("./helpers");
 require("dotenv").config();
 
-describe.skip("Users Endpoints", function() {
+describe("Users Endpoints", function() {
   let db;
   const users = seedData.users();
   const teams = seedData.teams();
@@ -15,6 +15,7 @@ describe.skip("Users Endpoints", function() {
   const results = seedData.results();
   const attendees = seedData.attendees();
   const expectedUsers = seedData.usersWithId();
+  const { makeAuthHeader } = require("./helpers");
 
   const testUser = {
     username: "Rokio",
@@ -94,7 +95,7 @@ describe.skip("Users Endpoints", function() {
         .expect([user]);
     });
   });
-  describe(`PATCH /api/:user_name`, () => {
+  describe.only(`PATCH /api/:user_name`, () => {
     beforeEach("insert users", () => helpers.seedUsers(db, users));
     const user = {
       id: 1,
@@ -109,9 +110,11 @@ describe.skip("Users Endpoints", function() {
       password: "password",
       nickname: "Nick"
     };
+    const userNameandPassword = { username: "Rokio", password: "password" };
     it("responds with new username", () => {
       return supertest(app)
         .patch(`/api/users/${user.username}`)
+        .set(`Authorization`, makeAuthHeader(userNameandPassword))
         .send({ newusername: newusername })
         .expect([newUserObject]);
     });

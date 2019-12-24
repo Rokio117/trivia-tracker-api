@@ -5,7 +5,7 @@ const { seedData } = require("./seedData");
 const { helpers } = require("./helpers");
 require("dotenv").config();
 
-describe.only("Users Endpoints", function() {
+describe.skip("Users Endpoints", function() {
   let db;
   const users = seedData.users();
   const teams = seedData.teams();
@@ -149,8 +149,8 @@ describe.only("Users Endpoints", function() {
       });
     });
   });
-  describe.only(`test /api/teams/:team_code/event`, () => {
-    context.only(`post /:team_code/event`, () => {
+  describe(`test /api/teams/:team_code/event`, () => {
+    context(`post /:team_code/event`, () => {
       it("Enters event and returns event object", () => {
         return supertest(app)
           .post(`/api/teams/${testTeam.teamcode}/event`)

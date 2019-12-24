@@ -7,6 +7,7 @@ const { validateBodyTypes } = require("../middleware");
 const { keyValidator } = require("../middleware");
 const { serverError } = require("../middleware");
 const { validateTeamExists } = require("../middleware");
+const { requireAuth } = require("../basic-auth");
 //usersRouter.use(validateParamTypes);
 usersRouter.use(jsonBodyParser);
 usersRouter.use(validateBodyTypes);
@@ -22,6 +23,7 @@ usersRouter
     });
   })
   .post(
+    requireAuth,
     keyValidator(["username", "nickname", "password"]),
     validateDuplicateUser,
     (req, res, next) => {
@@ -50,6 +52,7 @@ usersRouter
       });
   })
   .patch(
+    requireAuth,
     keyValidator(["newusername"]),
     validateUserExists,
     (req, res, next) => {
@@ -71,17 +74,22 @@ usersRouter
         res.json(nickname);
       });
   })
-  .patch(keyValidator(["nickname"]), validateUserExists, (req, res, next) => {
-    userService
-      .changePlayerName(
-        req.app.get("db"),
-        req.body.nickname,
-        req.params.user_name
-      )
-      .then(user => {
-        return res.json(user);
-      });
-  });
+  .patch(
+    keyValidator(["nickname"]),
+    requireAuth,
+    validateUserExists,
+    (req, res, next) => {
+      userService
+        .changePlayerName(
+          req.app.get("db"),
+          req.body.nickname,
+          req.params.user_name
+        )
+        .then(user => {
+          return res.json(user);
+        });
+    }
+  );
 
 // usersRouter
 //   .route("/:user_name/teams")
@@ -132,6 +140,7 @@ usersRouter
     });
   })
   .post(
+    requireAuth,
     keyValidator(["nickname", "password", "teamcode"]),
     validateDuplicateUser,
     validateTeamExists,

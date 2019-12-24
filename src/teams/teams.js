@@ -15,6 +15,7 @@ const joinsPractice = require("./joins-practice");
 const { checkForDuplicateEvent } = require("./teams-validators");
 const { requireAuth } = require("../basic-auth");
 const { validateDuplicateTeammate } = require("../middleware");
+
 teamsRouter.use(jsonBodyParser);
 teamsRouter.use(validateBodyTypes);
 //teamsRouter.use(requireAuth)
@@ -29,6 +30,7 @@ teamsRouter
     });
   })
   .post(
+    requireAuth,
     validateTeamNoExists,
     keyValidator([
       "teamname",
@@ -79,6 +81,7 @@ teamsRouter
     });
   })
   .patch(
+    requireAuth,
     validateTeamExists,
 
     keyValidator(["newname"]),
@@ -104,6 +107,7 @@ teamsRouter
       });
   })
   .post(
+    requireAuth,
     validateTeamExists,
     validateUserExists,
     validateDuplicateTeammate,
@@ -146,6 +150,7 @@ teamsRouter
       });
   })
   .patch(
+    requireAuth,
     validateTeamExists,
     validateUserExists,
 
@@ -186,6 +191,7 @@ teamsRouter
   });
 
 teamsRouter.route("/:team_code/winnings").patch(
+  requireAuth,
   validateTeamExists,
 
   keyValidator(["winnings"]),
@@ -203,6 +209,7 @@ teamsRouter.route("/:team_code/winnings").patch(
 teamsRouter
   .route("/:team_code/event")
   .post(
+    requireAuth,
     validateTeamExists,
     keyValidator([
       "date",
