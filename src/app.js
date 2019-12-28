@@ -10,6 +10,7 @@ const app = express();
 
 const morganOption = NODE_ENV === "production" ? "tiny" : "common";
 
+const authRouter = require("./auth-router");
 const teamsRouter = require("./teams/teams");
 const usersRouter = require("./users/users");
 const joinsRouter = require("./teams/joins");
@@ -21,6 +22,7 @@ app.use(cors());
 app.use("/api/joins", joinsRouter);
 app.use("/api/teams", teamsRouter);
 app.use("/api/users", usersRouter);
+app.use("/api/auth", authRouter);
 app.get("/api/", (req, res) => {
   res.send("Hello, world!");
 });

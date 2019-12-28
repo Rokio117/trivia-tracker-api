@@ -23,7 +23,6 @@ usersRouter
     });
   })
   .post(
-    requireAuth,
     keyValidator(["username", "nickname", "password"]),
     validateDuplicateUser,
     (req, res, next) => {
@@ -91,18 +90,6 @@ usersRouter
     }
   );
 
-// usersRouter
-//   .route("/:user_name/teams")
-//   .get(validateUserExists, (req, res, next) => {
-//     userService.getUserId(req.app.get("db"), req.params.user_name).then(id => {
-//       userService.getUserTeams(req.app.get("db"), id[0].id).then(teamIds => {
-//         userService.getTeamInfo(req.app.get("db"), teamIds).then(result => {
-//           //returns array of team objects(objects do not have history or members)
-//           res.json(result);
-//         });
-//       });
-//     });
-//   });
 usersRouter.route("/:user_name/exists").get((req, res, next) => {
   userService
     .userExists(req.app.get("db"), req.params.user_name)
@@ -118,14 +105,6 @@ usersRouter
         userService.getTeamInfo(req.app.get("db"), teamIds).then(teamInfo => {
           //returns array of team objects(objects do not have history or members)
 
-          // const teamcodes = teamInfo.map(team=>team.teamcode)
-
-          // for(let team = 0; team < teamcodes.length; team++){
-          //   teamService.getFullTeamInfo(req.app.get("db"),teamcodes[team]).then(teamInfo=>{
-
-          //   })
-          // }
-
           const fullTeamInfoForPlayer = teamInfo.map(team => {
             const teamcode = team.teamcode;
             return teamService.getFullTeamInfo(req.app.get("db"), teamcode);
@@ -140,7 +119,6 @@ usersRouter
     });
   })
   .post(
-    requireAuth,
     keyValidator(["nickname", "password", "teamcode"]),
     validateDuplicateUser,
     validateTeamExists,
@@ -152,12 +130,6 @@ usersRouter
         password: password
       };
 
-      //1 validations check
-      //2 post user check
-      //3 get assigned user id check
-      //4 using id post user/team relationship to members check
-      //5 GET user teams
-      //6 send team information
       userService.postNewUser(req.app.get("db"), newUser).then(user => {
         teamService
           .addToTeam(req.app.get("db"), user[0].id, teamcode, "Member")

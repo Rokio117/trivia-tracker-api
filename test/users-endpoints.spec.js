@@ -5,7 +5,7 @@ const { seedData } = require("./seedData");
 const { cleanTables } = require("./helpers");
 require("dotenv").config();
 
-describe("Users Endpoints", function() {
+describe.skip("Users Endpoints", function() {
   let db;
   const users = seedData.users();
   const teams = seedData.teams();
@@ -95,7 +95,7 @@ describe("Users Endpoints", function() {
         .expect([user]);
     });
   });
-  describe.only(`PATCH /api/:user_name`, () => {
+  describe(`PATCH /api/:user_name`, () => {
     beforeEach("insert users", () => helpers.seedUsers(db, users));
     const user = {
       id: 1,
