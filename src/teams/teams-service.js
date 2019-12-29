@@ -1,6 +1,3 @@
-const express = require("express");
-
-const userService = require("../users/users-service");
 const teamsService = {
   doesExist(knex, teamcode) {
     //return store.teams.map(team => team.teamcode === teamcode).includes(true);

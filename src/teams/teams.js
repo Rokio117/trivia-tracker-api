@@ -321,66 +321,6 @@ teamsRouter
     }
   );
 
-teamsRouter
-  .route("/:team_code/info")
-  .get(validateTeamExists, (req, res, next) => {
-    teamsService
-      .getFullTeamInfo(req.app.get("db"), req.params.team_code)
-      .then(result => res.json(result));
-  });
-
-teamsRouter.route("/locations").get((req, res, next) => {
-  teamsService.getLocations(req.app.get("db")).then(locations => {
-    const locationNames = locations.map(location => location.locationname);
-    res.json(locationNames);
-  });
-});
-
-teamsRouter.route("/locations/:name").get((req, res, next) => {
-  teamsService
-    .getLocationId(req.app.get("db"), req.params.name)
-    .then(result => {
-      const id = result[0].id;
-      res.json(id);
-    });
-});
-
-teamsRouter.route("/locations").post((req, res, next) => {
-  teamsService
-    .postNewLocation(req.app.get("db"), req.body.location)
-    .then(result => {
-      console.log(result);
-      res.json(result[0]);
-    });
-});
-teamsRouter.route("/ids").get((req, res, next) => {
-  usersService.getUsersIds(req.app.get("db"), req.body.roster).then(result => {
-    res.json(result);
-  });
-});
-teamsRouter.route("/:team_code/events/test").get((req, res, next) => {
-  teamsService
-    .getAllEventsForTeam(req.app.get("db"), req.params.team_code)
-    .then(eventList => {
-      res.json(eventList);
-    });
-});
-teamsRouter.route("/members/test").get((req, res, next) => {
-  teamsService.getMembersAndRoles(req.app.get("db"), 4).then(result => {
-    res.json(result);
-  });
-});
-teamsRouter.route("/history/test").get((req, res, next) => {
-  teamsService
-    .getHistory(req.app.get("db"), 1)
-    .then(result => res.json(result));
-});
-teamsRouter.route("/attendees/test").get((req, res, next) => {
-  teamsService
-    .getAttendees(req.app.get("db"), [1, 2])
-    .then(result => res.json(result));
-});
-
 function validateTeamNoExists(req, res, next) {
   teamsService.doesExist(req.app.get("db"), req.body.teamcode).then(team => {
     console.log("team after doesExist", team);

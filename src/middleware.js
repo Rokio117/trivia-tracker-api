@@ -1,6 +1,6 @@
 const teamsService = require("../src/teams/teams-service");
 const userService = require("./users/users-service");
-const express = require("express");
+
 function validateBodyTypes(req, res, next) {
   const possibleStringKeys = [
     "name",
