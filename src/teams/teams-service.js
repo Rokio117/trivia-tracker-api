@@ -126,13 +126,6 @@ const teamsService = {
           .returning("*")
           .then(result => result);
       });
-    // const newMember = {
-    //   username: player,
-    //   role: role
-    // };
-    // store.teams
-    //   .find(team => team.teamcode === teamcode)
-    //   .members.push(newMember);
   },
   changeRole(knex, playerId, role, teamcode) {
     return knex
