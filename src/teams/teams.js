@@ -11,7 +11,7 @@ const { validateUserExists } = require("../middleware");
 const { validateTeamExists } = require("../middleware");
 const { serverError } = require("../middleware");
 const { validateEvent } = require("./teams-validators");
-const joinsPractice = require("./joins-practice");
+
 const { checkForDuplicateEvent } = require("./teams-validators");
 const { requireAuth } = require("../basic-auth");
 const { validateDuplicateTeammate } = require("../middleware");

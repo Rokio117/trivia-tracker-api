@@ -1,4 +1,3 @@
-const store = require("../store");
 const teamService = require("../teams/teams-service");
 const usersService = {
   userExists(knex, username) {

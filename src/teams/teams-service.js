@@ -1,5 +1,5 @@
 const express = require("express");
-const store = require("../store");
+
 const userService = require("../users/users-service");
 const teamsService = {
   doesExist(knex, teamcode) {
@@ -88,9 +88,7 @@ const teamsService = {
           .where({ player_id: player_id, team_id: team_id });
       });
   },
-  userExists(username) {
-    return store.users.map(user => user.username).includes(username);
-  },
+
   getNamedMembersOfTeam(knex, userNames) {
     return knex
       .select("nickname")
