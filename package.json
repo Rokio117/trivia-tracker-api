@@ -12,7 +12,10 @@
     "migrate": "postgrator --config postgrator-config.js",
     "seed": "psql -U postgres -d trivia_tracker_test -f ./seeds/seed.trivia_tables.sql",
     "truncate": "psql -U postgres -d trivia_tracker_test -f ./seeds/trunc.trivia_tables.sql",
-    "dropTables": "psql -U postgres -d trivia_tracker_test -f ./seeds/drop.tables.sql"
+    "dropTables": "psql -U postgres -d trivia_tracker_test -f ./seeds/drop.tables.sql",
+    "truncateReal": "psql -U postgres -d trivia_tracker -f ./seeds/trunc.trivia_tables.sql",
+    "dropRealTables": "psql -U postgres -d trivia_tracker -f ./seeds/drop.tables.sql",
+    "seedRealTables": "psql -U postgres -d trivia_tracker -f ./seeds/seed.trivia_tables.sql"
   },
   "keywords": [],
   "engines": {
