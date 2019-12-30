@@ -118,34 +118,6 @@ describe("Users Endpoints", function() {
     });
   });
 
-  describe(`POST /api/users/:user_name/teams`, () => {
-    beforeEach("check the members table", () => {
-      return db.select("*").from("members");
-    });
-    beforeEach("insert players and teams", () => {
-      return helpers.seedUsers(db, users);
-    });
-    beforeEach("insert players and teams", () => {
-      return helpers.seedTeams(db, teams);
-    });
-    beforeEach("insert players and teams", () => {
-      return helpers.seedMembers(db, members);
-    });
-
-    const body = {
-      teamcode: "password",
-      nickname: "Bubba",
-      password: "password"
-    };
-    const expected = { id: 16, player_id: 14, team_id: 1, role: "Member" };
-
-    it("responds with users teams", () => {
-      return supertest(app)
-        .post(`/api/users/Bubba/teams`)
-        .send(body)
-        .expect([expected]);
-    });
-  });
   describe("GET /api/users/:user_name/name", () => {
     beforeEach("insert players ", () => {
       return helpers.seedUsers(db, users);
