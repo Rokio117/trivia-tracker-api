@@ -27,7 +27,6 @@ const usersService = {
       .from("trivia_players")
       .whereIn("username", userList)
       .then(ids => {
-        console.log(ids);
         const formattedIds = ids.map(id => id.id);
         return formattedIds;
       });
@@ -69,11 +68,6 @@ const usersService = {
       });
   },
   changePlayerName(knex, newName, username) {
-    console.log(
-      newName,
-      username,
-      "newName and username in change player name"
-    );
     return knex("trivia_players")
       .where({ username })
       .update({ nickname: newName })

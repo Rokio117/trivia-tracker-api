@@ -1,36 +1,29 @@
 const helpers = {
   seedUsers(db, players) {
-    console.log("seedUsers Ran");
     return db.into("trivia_players").insert(players);
   },
 
   seedTeams(db, teams) {
-    console.log("seedTeams ran");
     return db.into("trivia_teams").insert(teams);
   },
 
   seedMembers(db, members) {
-    console.log("seedmembers ran");
     return db.into("members").insert(members);
   },
 
   seedLocations(db, locations) {
-    console.log("seedLocations ran");
     return db.into("trivia_locations").insert(locations);
   },
 
   seedEvents(db, events) {
-    console.log("seedEvents ran");
     return db.into("trivia_events").insert(events);
   },
 
   seedResults(db, results) {
-    console.log("seedResults ran");
     return db.into("trivia_results").insert(results);
   },
 
   seedAttendees(db, attendees) {
-    console.log("seedAttendees ran");
     return db.into("trivia_attendees").insert(attendees);
   },
 
@@ -50,9 +43,7 @@ const helpers = {
           return this.seedLocations(db, locations).then(() => {
             return this.seedEvents(db, events).then(() => {
               return this.seedResults(db, results).then(() => {
-                return this.seedAttendees(db, attendees).then(() => {
-                  console.log("all seeds ran");
-                });
+                return this.seedAttendees(db, attendees).then(() => {});
               });
             });
           });

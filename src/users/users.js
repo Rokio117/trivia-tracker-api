@@ -18,7 +18,6 @@ usersRouter
     const knexInstance = req.app.get("db");
     //res.json(userService.getAllusers());
     userService.getAllusers(knexInstance).then(users => {
-      console.log("res.json users ran");
       res.json(users);
     });
   })
@@ -134,7 +133,6 @@ usersRouter
         teamService
           .addToTeam(req.app.get("db"), user[0].id, teamcode, "Member")
           .then(response => {
-            console.log("ran");
             res.status(200).json(response);
           });
       });
@@ -144,12 +142,7 @@ usersRouter
 usersRouter.use(serverError);
 
 function validateUserExists(req, res, next) {
-  console.log(
-    req.params.user_name,
-    "req.params.user_name in validateUserExists"
-  );
   userService.userExists(req.app.get("db"), req.params.user_name).then(id => {
-    console.log(id, "id in validateUserExists");
     if (!id.length) {
       let err = new Error("User does not exist");
       err.status = 404;
@@ -160,22 +153,17 @@ function validateUserExists(req, res, next) {
 }
 
 function validateDuplicateUser(req, res, next) {
-  console.log("validateDuplicateUser ran");
-  //req.user = userService.userExists(req.app.get("db"), req.params.user_name);
-
   const username = req.params.user_name
     ? req.params.user_name
     : req.body.username;
-  console.log("username in validate duplicateuser", username);
+
   userService.userExists(req.app.get("db"), username).then(id => {
-    //console.log(id, "id in validate duplicate");
     if (id.length) {
-      //console.log("went error path");
       let err = new Error("User name already exists");
       err.status = 400;
       return next(err);
     }
-    //console.log("went middle path");
+
     return next();
   });
 }

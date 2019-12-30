@@ -8,12 +8,6 @@ const AuthService = {
       .split(":");
   },
   createJwt(subject, payload) {
-    console.log(
-      subject,
-      payload,
-      config.JWT_SECRET,
-      "subject,payload,and jwt secretn in createJwt"
-    );
     return jwt.sign(payload, config.JWT_SECRET, {
       subject: subject,
       algorithm: "HS256"

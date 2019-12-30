@@ -91,7 +91,6 @@ teamsRouter
       teamsService
         .changeTeamName(req.app.get("db"), newname, teamcode)
         .then(team => {
-          console.log("team after helper function", team);
           res.json(team);
         });
     }
@@ -124,7 +123,6 @@ teamsRouter
             role
           )
           .then(members => {
-            console.log(members);
             res.json(members);
           });
       });
@@ -144,7 +142,6 @@ teamsRouter
             req.params.team_code
           )
           .then(role => {
-            console.log(role, "role before res.json");
             res.json(role);
           });
       });
@@ -200,7 +197,6 @@ teamsRouter.route("/:team_code/winnings").patch(
     teamsService
       .changeWinnings(req.app.get("db"), winnings, req.params.team_code)
       .then(team => {
-        console.log(team);
         res.json(team);
       });
   }
@@ -255,10 +251,6 @@ teamsRouter
                           .getTeam(req.app.get("db"), req.params.team_code)
                           .then(teamArray => {
                             const teamObject = teamArray[0];
-                            console.log(
-                              teamObject,
-                              "teamobject at begining of function"
-                            );
                             let {
                               wins,
                               firstplace,
@@ -288,10 +280,7 @@ teamsRouter
                               thirdplace: thirdplace,
                               winnings: winnings
                             };
-                            console.log(
-                              newStandings,
-                              "newstandings at the end of the function"
-                            );
+
                             teamsService
                               .patchTeamStandings(
                                 req.app.get("db"),
@@ -299,7 +288,6 @@ teamsRouter
                                 req.params.team_code
                               )
                               .then(updatedTeam => {
-                                console.log(updatedTeam);
                                 const formattedTeam = updatedTeam[0];
                                 const response = {
                                   ...formattedTeam,
@@ -323,7 +311,6 @@ teamsRouter
 
 function validateTeamNoExists(req, res, next) {
   teamsService.doesExist(req.app.get("db"), req.body.teamcode).then(team => {
-    console.log("team after doesExist", team);
     if (team.length) {
       let err = new Error("Team code is taken");
       err.status = 400;

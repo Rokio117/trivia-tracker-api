@@ -29,7 +29,6 @@ describe("Users Endpoints", function() {
     nickname: "Bubba"
   };
   before("make knex instance", () => {
-    console.log(process.env.TEST_DB_URL);
     db = knex({
       client: "pg",
       connection: process.env.DB_TEST_URL
@@ -39,11 +38,9 @@ describe("Users Endpoints", function() {
 
   after("disconnect from db", () => db.destroy());
   before("clean the tables", () => {
-    console.log("before cleantables ran");
     return cleanTables(db);
   });
   afterEach("clean up", () => {
-    console.log("after cleantables ran");
     return cleanTables(db);
   });
 
@@ -123,12 +120,7 @@ describe("Users Endpoints", function() {
 
   describe(`POST /api/users/:user_name/teams`, () => {
     beforeEach("check the members table", () => {
-      return db
-        .select("*")
-        .from("members")
-        .then(members =>
-          console.log(members, "members in beforeEach of /user_name/teams")
-        );
+      return db.select("*").from("members");
     });
     beforeEach("insert players and teams", () => {
       return helpers.seedUsers(db, users);

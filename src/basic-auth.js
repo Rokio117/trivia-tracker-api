@@ -14,11 +14,7 @@ function requireAuth(req, res, next) {
   const [tokenUserName, tokenPassword] = AuthService.parseBasicToken(
     basicToken
   );
-  console.log(
-    tokenUserName,
-    tokenPassword,
-    "username and password after parsed"
-  );
+
   if (!tokenUserName || !tokenPassword) {
     let err = new Error("Unauthorized request ");
     err.status = 401;

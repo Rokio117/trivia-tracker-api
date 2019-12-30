@@ -1,7 +1,5 @@
 const teamsService = {
   doesExist(knex, teamcode) {
-    //return store.teams.map(team => team.teamcode === teamcode).includes(true);
-    //console.log("teamcode in doesExist", teamcode);
     return knex
       .select("id")
       .from("trivia_teams")
@@ -11,7 +9,6 @@ const teamsService = {
     return knex.select("*").from("trivia_teams");
   },
   getAllEventsForTeam(knex, teamcode) {
-    console.log(teamcode, "teamcode in getalleventsforteam");
     return this.getTeamId(knex, teamcode).then(teamId => {
       return knex
         .select("eventdate", "eventlocation")
@@ -42,8 +39,6 @@ const teamsService = {
       });
   },
   getTeamMembers(knex, teamcode) {
-    console.log("getteammembers ran");
-    //return store.teams.find(team => team.teamcode === teamcode).members;
     return knex
       .select("id")
       .from("trivia_teams")
@@ -78,7 +73,7 @@ const teamsService = {
       .where({ teamcode })
       .then(teamCode => {
         const team_id = teamCode[0].id;
-        console.log("player_id", player_id, teamCode);
+
         return knex
           .select("role")
           .from("members")
@@ -104,7 +99,6 @@ const teamsService = {
       .into("trivia_teams")
       .returning("*")
       .then(result => {
-        console.log(result, "result in postNewTeam");
         return result;
       });
   },
@@ -169,7 +163,6 @@ const teamsService = {
       });
   },
   getLocationId(knex, location) {
-    console.log("getLocationIdran", location);
     return knex
       .select("id")
       .from("trivia_locations")
@@ -180,7 +173,6 @@ const teamsService = {
       });
   },
   postNewLocation(knex, newLocation) {
-    console.log("postNewLocation ran", newLocation);
     return knex
       .insert({ locationname: newLocation })
       .into("trivia_locations")
@@ -205,26 +197,18 @@ const teamsService = {
   },
   findOrInsertEvent(knex, event) {
     return this.getevents(knex).then(events => {
-      const locationCompare = events.map(
-        pastEvent => {
-          const dateAndLocation = {
-            eventdate: pastEvent.eventdate,
-            eventlocation: pastEvent.eventlocation
-          };
-          if (
-            pastEvent.eventdate === event.eventdate &&
-            pastEvent.eventlocation === event.eventlocation
-          ) {
-            return true;
-          } else return false;
-        }
-
-        // return knex
-        //   .into("trivia_events")
-        //   .insert(event)
-        //   .returning("id");
-      );
-      console.log(locationCompare.includes(true));
+      const locationCompare = events.map(pastEvent => {
+        const dateAndLocation = {
+          eventdate: pastEvent.eventdate,
+          eventlocation: pastEvent.eventlocation
+        };
+        if (
+          pastEvent.eventdate === event.eventdate &&
+          pastEvent.eventlocation === event.eventlocation
+        ) {
+          return true;
+        } else return false;
+      });
       if (locationCompare.includes(true)) {
         return knex
           .select("id")
@@ -260,14 +244,12 @@ const teamsService = {
         .into("trivia_results")
         .returning("id")
         .then(id => {
-          console.log(id);
           return id[0];
         });
     });
   },
 
   postAttendees(knex, attendees, teamcode, eventId) {
-    console.log("event id in post attendees", eventId);
     return this.getTeamId(knex, teamcode).then(teamId => {
       const attendeeList = attendees.map(attendee => {
         return {
@@ -276,7 +258,6 @@ const teamsService = {
           event_id: eventId
         };
       });
-      console.log(attendeeList, "attendeelist in postAttendees");
       return knex
         .insert(attendeeList)
         .into("trivia_attendees")
@@ -333,7 +314,6 @@ const teamsService = {
       .join("trivia_players", "members.player_id", "trivia_players.id")
       .where("members.team_id", teamId)
       .then(result => {
-        console.log(result, "result of getMembersAndRoles");
         return result;
       });
   },
@@ -369,7 +349,6 @@ const teamsService = {
         .where("trivia_results.team_id", teamId)
         .distinct()
         .then(results => {
-          console.log(results, "results of monster join");
           return results;
         })
     );

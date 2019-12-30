@@ -1,14 +1,11 @@
 const userService = require("../users/users-service");
 const teamsService = require("./teams-service");
 function validateEvent(req, res, next) {
-  console.log("validateEvent ran");
-
   userService.getAllusers(req.app.get("db")).then(userlist => {
     const usernames = userlist.map(userobject => userobject.username);
-    console.log(usernames);
+
     req.body.roster.forEach(player => {
       if (!usernames.includes(player)) {
-        console.log("member error");
         let err = new Error(`Player '${player}' was not found`);
         err.status = 400;
         return next(err);
@@ -17,7 +14,6 @@ function validateEvent(req, res, next) {
   });
   const outcome = ["Win", "Loss"];
   if (!outcome.includes(req.body.outcome)) {
-    console.log("outcome error");
     let err = new Error(`outcome must be 'Win' or 'Loss'`);
     err.status = 400;
     return next(err);
@@ -41,7 +37,6 @@ function validateEvent(req, res, next) {
   });
 
   if (!positions.includes(req.body.position)) {
-    console.log("position error");
     let err = new Error(`Position must be one of ${positions}`);
     err.status = 400;
     return next(err);
@@ -62,12 +57,9 @@ function checkForDuplicateEvent(req, res, next) {
         .getAllEventsForTeam(req.app.get("db"), req.params.team_code)
         .then(eventList => {
           eventList.forEach(event => {
-            console.log(event.eventdate === newEvent.eventdate);
-            console.log(event.eventlocation === locationId);
             const matchingDates = event.eventdate === newEvent.eventdate;
             const matchingLocations = event.eventlocation === locationId;
             if (matchingDates && matchingLocations) {
-              console.log("if statement returnd true");
               let err = new Error(
                 `Event with date '${newEvent.eventdate}' and location '${newEvent.eventlocation}' already exists`
               );
@@ -75,7 +67,7 @@ function checkForDuplicateEvent(req, res, next) {
               return next(err);
             }
           });
-          console.log("bottom next ran");
+
           return next();
         });
     });

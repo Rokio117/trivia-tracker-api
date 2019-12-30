@@ -112,7 +112,7 @@ function validateUserExists(req, res, next) {
 }
 function validateTeamExists(req, res, next) {
   const team = req.params.team_code ? req.params.team_code : req.body.teamcode;
-  console.log(team, "team in validateTeamExists");
+
   const knexinstance = req.app.get("db");
   teamsService.doesExist(knexinstance, team).then(id => {
     if (!id.length) {
@@ -120,7 +120,7 @@ function validateTeamExists(req, res, next) {
       err.status = 404;
       return next(err);
     }
-    console.log("went middle path");
+
     return next();
   });
 }

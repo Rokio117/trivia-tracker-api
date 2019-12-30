@@ -23,7 +23,6 @@ describe("Users Endpoints", function() {
   const teamWithNewWinnings = helpers.teamWithNewWinnings();
   const { makeAuthHeader } = require("./helpers");
   before("make knex instance", () => {
-    console.log(process.env.TEST_DB_URL);
     db = knex({
       client: "pg",
       connection: process.env.DB_TEST_URL
@@ -33,11 +32,9 @@ describe("Users Endpoints", function() {
 
   after("disconnect from db", () => db.destroy());
   before("clean the tables", () => {
-    console.log("clean tables before ran");
     return cleanTables(db);
   });
   afterEach("clean up", () => {
-    console.log("afterEach clean up tables ran");
     return cleanTables(db);
   });
   //seed tables beforeeach, if test needs clean tables clean it manually in the test
