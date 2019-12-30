@@ -5,7 +5,7 @@ const { seedData } = require("./seedData");
 const { cleanTables } = require("./helpers");
 require("dotenv").config();
 
-describe.skip("Users Endpoints", function() {
+describe("Users Endpoints", function() {
   let db;
   const users = seedData.users();
   const teams = seedData.teams();
@@ -15,6 +15,7 @@ describe.skip("Users Endpoints", function() {
   const results = seedData.results();
   const attendees = seedData.attendees();
   const expectedUsers = seedData.usersWithId();
+  const expectedUserTeams = seedData.expectedUserTeams();
   const { makeAuthHeader } = require("./helpers");
 
   const testUser = {
@@ -119,46 +120,7 @@ describe.skip("Users Endpoints", function() {
         .expect([newUserObject]);
     });
   });
-  describe(`GET /api/users/:user_name/teams`, () => {
-    console.log(testUser.username);
-    beforeEach("insert players and teams", () => {
-      return helpers.seedUsers(db, users);
-    });
-    beforeEach("insert players and teams", () => {
-      return helpers.seedTeams(db, teams);
-    });
-    beforeEach("insert players and teams", () => {
-      return helpers.seedMembers(db, members);
-    });
 
-    const userTeams = [
-      {
-        id: 1,
-        teamcode: "password",
-        teamname: "Well Win Again Someday",
-        wins: 6,
-        firstplace: 3,
-        secondplace: 2,
-        thirdplace: 1,
-        winnings: 395
-      },
-      {
-        id: 2,
-        teamcode: "password2",
-        teamname: "Paddys Pub",
-        wins: 600,
-        firstplace: 300,
-        secondplace: 200,
-        thirdplace: 100,
-        winnings: 1000
-      }
-    ];
-    it("responds with teams for user", () => {
-      return supertest(app)
-        .get(`/api/users/${testUser.username}/teams`)
-        .expect(userTeams);
-    });
-  });
   describe(`POST /api/users/:user_name/teams`, () => {
     beforeEach("check the members table", () => {
       return db
@@ -183,7 +145,7 @@ describe.skip("Users Endpoints", function() {
       nickname: "Bubba",
       password: "password"
     };
-    const expected = { id: 15, player_id: 14, team_id: 1 };
+    const expected = { id: 16, player_id: 14, team_id: 1, role: "Member" };
 
     it("responds with users teams", () => {
       return supertest(app)
@@ -206,6 +168,7 @@ describe.skip("Users Endpoints", function() {
     beforeEach("insert players ", () => {
       return helpers.seedUsers(db, users);
     });
+    const userNameandPassword = { username: "Rokio", password: "password" };
     const expected = {
       id: 1,
       username: "Rokio",
@@ -215,6 +178,7 @@ describe.skip("Users Endpoints", function() {
     it("responds with new player info", () => {
       return supertest(app)
         .patch(`/api/users/Rokio/name`)
+        .set(`Authorization`, makeAuthHeader(userNameandPassword))
         .send({ nickname: "Donald" })
         .expect([expected]);
     });

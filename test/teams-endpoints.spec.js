@@ -5,7 +5,7 @@ const { seedData } = require("./seedData");
 const { helpers } = require("./helpers");
 require("dotenv").config();
 
-describe.skip("Users Endpoints", function() {
+describe("Users Endpoints", function() {
   let db;
   const users = seedData.users();
   const teams = seedData.teams();
@@ -21,6 +21,7 @@ describe.skip("Users Endpoints", function() {
   const expectedMembers = helpers.expectedMembers();
   const testUser = helpers.testUser();
   const teamWithNewWinnings = helpers.teamWithNewWinnings();
+  const { makeAuthHeader } = require("./helpers");
   before("make knex instance", () => {
     console.log(process.env.TEST_DB_URL);
     db = knex({
@@ -52,6 +53,7 @@ describe.skip("Users Endpoints", function() {
       attendees
     );
   });
+  const userNameandPassword = { username: "Rokio", password: "password" };
   describe(` testing /api/teams/  `, () => {
     context(`Get /api/teams/`, () => {
       it(`responds with all teams`, () => {
@@ -64,6 +66,7 @@ describe.skip("Users Endpoints", function() {
       it("posts new team and responds with new team object", () => {
         return supertest(app)
           .post(`/api/teams/`)
+          .set(`Authorization`, makeAuthHeader(userNameandPassword))
           .send(newTeam)
           .expect([expectedTeam]);
       });
@@ -87,6 +90,7 @@ describe.skip("Users Endpoints", function() {
         const expectedNewName = { ...testTeam, ...nameBuilder, id: 1 };
         return supertest(app)
           .patch(`/api/teams/${testTeam.teamcode}/team`)
+          .set(`Authorization`, makeAuthHeader(userNameandPassword))
           .send(newTeamname)
           .expect([expectedNewName]);
       });
@@ -108,6 +112,7 @@ describe.skip("Users Endpoints", function() {
         ];
         return supertest(app)
           .post(`/api/teams/${testTeam.teamcode}/members`)
+          .set(`Authorization`, makeAuthHeader(userNameandPassword))
           .send(newMember)
           .expect(expectedMembership);
       });
@@ -125,6 +130,7 @@ describe.skip("Users Endpoints", function() {
       it("Changes the users role", () => {
         return supertest(app)
           .patch(`/api/teams/${testTeam.teamcode}/${testUser.username}/role`)
+          .set(`Authorization`, makeAuthHeader(userNameandPassword))
           .send({ role: "Reporter" })
           .expect([{ id: 1, player_id: 1, team_id: 1, role: "Reporter" }]);
       });
@@ -144,6 +150,7 @@ describe.skip("Users Endpoints", function() {
       it("Changes the winnings for the team", () => {
         return supertest(app)
           .patch(`/api/teams/${testTeam.teamcode}/winnings`)
+          .set(`Authorization`, makeAuthHeader(userNameandPassword))
           .send({ winnings: 5000 })
           .expect([teamWithNewWinnings]);
       });
@@ -154,6 +161,7 @@ describe.skip("Users Endpoints", function() {
       it("Enters event and returns event object", () => {
         return supertest(app)
           .post(`/api/teams/${testTeam.teamcode}/event`)
+          .set(`Authorization`, makeAuthHeader(userNameandPassword))
           .send(helpers.testEvent())
           .expect(helpers.expectedEventObject());
       });

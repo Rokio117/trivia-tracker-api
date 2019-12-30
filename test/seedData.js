@@ -273,30 +273,136 @@ const seedData = {
   },
   usersWithId() {
     return [
-      { username: "Rokio", password: "password", nickname: "Nick" },
-      { username: "Jen", password: "password", nickname: "Jennifer" },
-      { username: "Ash", password: "password", nickname: "Ashley" },
-      { username: "Deandra", password: "password", nickname: "Dee" },
-      { username: "Charlie", password: "password", nickname: "Charlie" },
-      { username: "Mac", password: "password", nickname: "Mac" },
-      { username: "Demo", password: "password", nickname: "Demo" },
+      { id: 1, username: "Rokio", password: "password", nickname: "Nick" },
+      { id: 2, username: "Jen", password: "password", nickname: "Jennifer" },
+      { id: 3, username: "Ash", password: "password", nickname: "Ashley" },
+      { id: 4, username: "Deandra", password: "password", nickname: "Dee" },
+      { id: 5, username: "Charlie", password: "password", nickname: "Charlie" },
+      { id: 6, username: "Mac", password: "password", nickname: "Mac" },
+      { id: 7, username: "Demo", password: "password", nickname: "Demo" },
       {
+        id: 8,
         username: "Demo2",
         password: "password",
         nickname: "Demo Lovato"
       },
       {
+        id: 9,
         username: "Demo3",
         password: "password",
         nickname: "Demo Moore"
       },
-      { username: "Demo4", password: "password", nickname: "Demenem" },
-      { username: "Harry", password: "password", nickname: "Harry" },
-      { username: "Ron", password: "password", nickname: "Ron" },
+      { id: 10, username: "Demo4", password: "password", nickname: "Demenem" },
+      { id: 11, username: "Harry", password: "password", nickname: "Harry" },
+      { id: 12, username: "Ron", password: "password", nickname: "Ron" },
       {
+        id: 13,
         username: "Hermione",
         password: "password",
         nickname: "Hermione"
+      }
+    ];
+  },
+  expectedUserTeams() {
+    return [
+      {
+        id: 1,
+        teamcode: "password",
+        teamname: "Well Win Again Someday",
+        wins: 6,
+        firstplace: 3,
+        secondplace: 2,
+        thirdplace: 1,
+        winnings: 395,
+        members: [
+          {
+            username: "Rokio",
+            role: "Captain",
+            nickname: "Nick"
+          },
+          {
+            username: "Jen",
+            role: "Captain",
+            nickname: "Jennifer"
+          },
+          {
+            username: "Ash",
+            role: "Reporter",
+            nickname: "Ashley"
+          }
+        ],
+        history: [
+          {
+            eventdate: "2019-01-23",
+            locationname: "Paddys Pub",
+            outcome: "Win",
+            position: "1st",
+            winnings: 30,
+            id: 2,
+            roster: ["Rokio", "Jen", "Ash"]
+          },
+          {
+            eventdate: "2019-01-22",
+            locationname: "Paddys Pub",
+            outcome: "Loss",
+            position: "4th",
+            winnings: 0,
+            id: 1,
+            roster: ["Ash", "Rokio"]
+          }
+        ]
+      },
+      {
+        id: 2,
+        teamcode: "password2",
+        teamname: "Paddys Pub",
+        wins: 600,
+        firstplace: 300,
+        secondplace: 200,
+        thirdplace: 100,
+        winnings: 1000,
+        members: [
+          {
+            username: "Rokio",
+            role: "Captain",
+            nickname: "Nick"
+          },
+          {
+            username: "Deandra",
+            role: "Captain",
+            nickname: "Dee"
+          },
+          {
+            username: "Mac",
+            role: "Reporter",
+            nickname: "Mac"
+          },
+          {
+            username: "Charlie",
+            role: "Member",
+            nickname: "Charlie"
+          }
+        ],
+        history: [
+          {
+            eventdate: "2019-01-23",
+            locationname: "Paddys Pub",
+            outcome: "Win",
+            position: "1st",
+            winnings: 30,
+            id: 2,
+            roster: ["Deandra", "Rokio", "Mac"]
+          },
+          {
+            eventdate: "2019-01-22",
+            locationname: "Paddys Pub",
+            outcome: "Win",
+            position: "1st",
+            winnings: 30,
+            id: 1,
+            roster: ["Rokio", "Mac", "Deandra"]
+          }
+        ]
       }
     ];
   }
