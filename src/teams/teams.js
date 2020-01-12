@@ -21,13 +21,6 @@ teamsRouter.use(validateBodyTypes);
 
 teamsRouter
   .route("/")
-  .get((req, res, next) => {
-    const knexInstance = req.app.get("db");
-
-    teamsService.getAllTeams(knexInstance).then(teams => {
-      res.json(teams);
-    });
-  })
   .post(
     requireAuth,
     validateTeamNoExists,
