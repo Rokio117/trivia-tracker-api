@@ -8,19 +8,12 @@ const { keyValidator } = require("../middleware");
 const { serverError } = require("../middleware");
 const { validateTeamExists } = require("../middleware");
 const { requireAuth } = require("../basic-auth");
-//usersRouter.use(validateParamTypes);
+
 usersRouter.use(jsonBodyParser);
 usersRouter.use(validateBodyTypes);
 
 usersRouter
   .route("/")
-  .get((req, res, next) => {
-    const knexInstance = req.app.get("db");
-    //res.json(userService.getAllusers());
-    userService.getAllusers(knexInstance).then(users => {
-      res.json(users);
-    });
-  })
   .post(
     keyValidator(["username", "nickname", "password"]),
     validateDuplicateUser,
@@ -35,14 +28,12 @@ usersRouter
       userService
         .postNewUser(knexInstance, newUser)
         .then(response => res.json(response));
-      //res.json(userService.getAllusers(knexInstance));
     }
   );
 
 usersRouter
   .route("/:user_name")
   .get(validateUserExists, (req, res, next) => {
-    //res.json(userService.getUser(req.app.get("db"), req.params.user_name));
     userService
       .getUser(req.app.get("db"), req.params.user_name)
       .then(result => {
@@ -102,17 +93,13 @@ usersRouter
     userService.getUserId(req.app.get("db"), req.params.user_name).then(id => {
       userService.getUserTeams(req.app.get("db"), id[0].id).then(teamIds => {
         userService.getTeamInfo(req.app.get("db"), teamIds).then(teamInfo => {
-          //returns array of team objects(objects do not have history or members)
-
           const fullTeamInfoForPlayer = teamInfo.map(team => {
             const teamcode = team.teamcode;
             return teamService.getFullTeamInfo(req.app.get("db"), teamcode);
           });
-
           Promise.all(fullTeamInfoForPlayer).then(result => {
             res.json(result);
           });
-          //fullTeamInfoForPlayer is a list of promises
         });
       });
     });

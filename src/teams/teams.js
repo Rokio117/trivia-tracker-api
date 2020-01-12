@@ -18,13 +18,12 @@ const { validateDuplicateTeammate } = require("../middleware");
 
 teamsRouter.use(jsonBodyParser);
 teamsRouter.use(validateBodyTypes);
-//teamsRouter.use(requireAuth)
 
 teamsRouter
   .route("/")
   .get((req, res, next) => {
     const knexInstance = req.app.get("db");
-    //res.json(teamsService.getAllTeams());
+
     teamsService.getAllTeams(knexInstance).then(teams => {
       res.json(teams);
     });
@@ -65,8 +64,6 @@ teamsRouter
       });
     }
   );
-//teamsRouter.route("/:team_code/*").get(validateTeamcode);
-//teamsRouter.route("/:team_code/*").all(validateTeamcode);
 
 teamsRouter.route("/:team_code/exists").get((req, res, next) => {
   teamsService.doesExist(req.app.get("db"), req.params.team_code).then(id => {
@@ -183,8 +180,6 @@ teamsRouter
             res.json(nicknameList);
           });
       });
-
-    //res.json(teamsService.getNamedMembersOfTeam(members));
   });
 
 teamsRouter.route("/:team_code/winnings").patch(
@@ -246,7 +241,6 @@ teamsRouter
                       )
                       .then(attendeeIds => {
                         const eventIds = { eventId, resultId, attendeeIds };
-                        //change numbers for wins,firstplace,secondplace,thirdplace,and winnings
                         teamsService
                           .getTeam(req.app.get("db"), req.params.team_code)
                           .then(teamArray => {
@@ -295,9 +289,6 @@ teamsRouter
                                   resultId: resultId,
                                   attendeeIds: attendeeIds
                                 };
-                                //make function that can construct a team
-                                //in the format it appears in in store
-                                //then return it
                                 res.json(response);
                               });
                           });

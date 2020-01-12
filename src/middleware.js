@@ -86,6 +86,7 @@ function keyValidator(requiredKeys = []) {
         err.status = 400;
         next(err);
       }
+      
       if (!requiredKeys.includes(key)) {
         let err = new Error(`Unnecessary key '${key}' in request body`);
         err.status = 400;

@@ -51,18 +51,15 @@ const teamsService = {
           .where({ team_id })
           .then(players => {
             const playerIds = players.map(player => player.player_id);
-            return (
-              knex
-                .select("username", "nickname", "role")
-                //add join to members to get role
-                .from("trivia_players")
-                .join("members", "trivia_players.id", "members.player_id")
-                .whereIn("trivia_players.id", playerIds)
-                .distinct()
-                .then(members => {
-                  return members;
-                })
-            );
+            return knex
+              .select("username", "nickname", "role")
+              .from("trivia_players")
+              .join("members", "trivia_players.id", "members.player_id")
+              .whereIn("trivia_players.id", playerIds)
+              .distinct()
+              .then(members => {
+                return members;
+              });
           });
       });
   },
@@ -86,14 +83,8 @@ const teamsService = {
       .select("nickname")
       .from("trivia_players")
       .whereIn("username", userNames);
-    // return members.map(member =>
-    //   Object.assign(member, {
-    //     name: userService.getNameFromUsername(member.username)
-    //   })
-    // );
   },
   postNewTeam(knex, teamObject) {
-    //store.teams.push(teamObject);
     return knex
       .insert(teamObject)
       .into("trivia_teams")
@@ -318,40 +309,30 @@ const teamsService = {
       });
   },
   getHistory(knex, teamId) {
-    return (
-      knex
-        .select(
-          "eventdate",
-          "locationname",
-          "outcome",
-          "position",
-          "winnings",
-          "trivia_events.id"
-        )
-        //.select("*")
-        .from("trivia_results")
-        .join("trivia_events", "trivia_results.event_id", "trivia_events.id")
-        .join(
-          "trivia_locations",
-          "trivia_events.eventlocation",
-          "trivia_locations.id"
-        )
-        .join(
-          "trivia_attendees",
-          "trivia_events.id",
-          "trivia_attendees.event_id"
-        )
-        .join(
-          "trivia_players",
-          "trivia_attendees.player_id",
-          "trivia_players.id"
-        )
-        .where("trivia_results.team_id", teamId)
-        .distinct()
-        .then(results => {
-          return results;
-        })
-    );
+    return knex
+      .select(
+        "eventdate",
+        "locationname",
+        "outcome",
+        "position",
+        "winnings",
+        "trivia_events.id"
+      )
+
+      .from("trivia_results")
+      .join("trivia_events", "trivia_results.event_id", "trivia_events.id")
+      .join(
+        "trivia_locations",
+        "trivia_events.eventlocation",
+        "trivia_locations.id"
+      )
+      .join("trivia_attendees", "trivia_events.id", "trivia_attendees.event_id")
+      .join("trivia_players", "trivia_attendees.player_id", "trivia_players.id")
+      .where("trivia_results.team_id", teamId)
+      .distinct()
+      .then(results => {
+        return results;
+      });
   },
 
   getAttendees(knex, eventIds) {
