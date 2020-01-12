@@ -4,6 +4,8 @@ Live app: https://trivia-tracker-app-alpha-six.now.sh/
 
 Trivia Tracker client can be found at: https://github.com/Rokio117/trivia-tracker
 
+## Technologies
+Trivia Tracker API was created using Node.js, ExpressJs, and postgreSQL
 
 ## Get user information
 
