@@ -155,9 +155,57 @@ POST /api/users/:user_name/teams
 
 ```
 
-## Change team information
-
-
+## Add team information
+### Add new team
+#### Request
+PATCH /api/teams/
+#### Response
+```javascript
+[
+  {
+    "id":number,
+    "teamcode":"",
+    "teamname":"",
+    "wins":number,
+    "firstplace":number,
+    "secondplace":number,
+    "thirdplace":number,
+    "winningd":number
+  }
+]
+```
+### Add user to team
+#### Request
+POST /api/teams/:team_code/members
+#### Response
+```javascript
+[
+  {
+    "id":number,
+    "playerid":number,
+    "team_id":number,
+    "role":""
+  }
+]
+```
+### Add event to team
+#### Request
+POST /api/teams/:team_code/event
+#### Response
+```javascript
+[
+  {
+    "id":number,
+    "teamcode":"",
+    "teamname":"",
+    "wins":number,
+    "firstplace":number,
+    "secondplace":number,
+    "thirdplace":number,
+    "winningd":number
+  }
+]
+```
 ## Change user information
 
 ### Change username
@@ -188,6 +236,55 @@ PATCH /api/users/:user_name/name
 ```
 
 ## Change team information
-
+### Change team name
+#### Request
+PATCH /api/teams/:team_code/team
+#### Response
+```javascript
+[
+  {
+    "id":number,
+    "teamcode":"",
+    "teamname":"",
+    "wins":number,
+    "firstplace":number,
+    "secondplace":number,
+    "thirdplace":number,
+    "winningd":number
+  }
+]
+```
+### Change user role on team
+#### Request
+PATCH /api/teams/:team_code/:user_name/role
+#### Response
+```javascript
+[
+  {
+    "id":number,
+    "playerid":number,
+    "team_id":number,
+    "role":""
+  }
+]
+```
+### Change team winnings
+#### Request
+PATCH /api/teams/:team_code/winnings
+#### Response
+```javascript
+[
+  {
+    "id":number,
+    "teamcode":"",
+    "teamname":"",
+    "wins":number,
+    "firstplace":number,
+    "secondplace":number,
+    "thirdplace":number,
+    "winningd":number
+  }
+]
+```
 
 
