@@ -139,14 +139,23 @@ POST /api/users/
   }
 ]
 
-### 
+### Post new user and add them to team
+#### Request
+POST /api/users/:user_name/teams
+#### Response
+```javascript
 
+[
+  {
+    "username":"",
+    "nickname":"",
+    "role":""
+  }
+]
 
+```
 
-
-
-
-## Post team information
+## Change team information
 
 
 ## Change user information
