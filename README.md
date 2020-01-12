@@ -34,7 +34,7 @@ GET /api/users/:username/name
 ```
 
 ### Get user teams info
-### Request 
+#### Request 
 GET /api/users/:user_name/teams
 #### Response
 ```javascript
@@ -130,6 +130,7 @@ GET /api/teams/:teamcode/names
 #### Request
 POST /api/users/
 #### Response
+```javascript
 [
   {
     "id":number,
@@ -138,6 +139,7 @@ POST /api/users/
     "password":"",
   }
 ]
+```
 
 ### Post new user and add them to team
 #### Request
