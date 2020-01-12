@@ -90,6 +90,95 @@ GET /api/teams/:teamcode/team
   }
 ]
 ```
+### Get team members
+#### Request
+GET /api/teams/:teamcode/members
+#### Response
+```javascript
+[
+  {
+    "username":"",
+    "nickname":"",
+    "role":""
+  }
+]
+```
+### Get Role of user on team
+#### Request
+GET /api/teams/:teamcode/:username/role
+#### Response
+``` javascript
+[
+  {
+    "role":""
+  }
+[
+```
+### Get nicknames of all members on team
+#### Request 
+GET /api/teams/:teamcode/names
+#### Response
+```javascript
+[
+  nickname
+]
+```
+
 ## Post user information
 
+### Post new user
+#### Request
+POST /api/users/
+#### Response
+[
+  {
+    "id":number,
+    "username":"",
+    "nickname":"",
+    "password":"",
+  }
+]
+
+### 
+
+
+
+
+
+
 ## Post team information
+
+
+## Change user information
+
+### Change username
+#### Request
+PATCH /api/users/:username
+#### Response
+```javascript
+[
+  {
+    "id":number,
+    "username":"",
+    "password":"",
+    "nickname":""
+  }
+[
+```
+### Change nickname
+#### Request
+PATCH /api/users/:user_name/name
+#### Response
+```javascript
+[
+  {
+    "id":number,
+    "username":"",
+    "password":"",
+    "nickname":""
+```
+
+## Change team information
+
+
+
