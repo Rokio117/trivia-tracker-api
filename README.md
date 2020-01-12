@@ -1,26 +1,294 @@
-# Express Boilerplate!
+# Trivia Tracker API
 
-This is a boilerplate project used for starting new projects!
+Live app: https://trivia-tracker-app-alpha-six.now.sh/
 
-## Set up
+Trivia Tracker client can be found at: https://github.com/Rokio117/trivia-tracker
 
-Complete the following steps to start a new project (NEW-PROJECT-NAME):
+## Technologies
+Trivia Tracker API was created using Node.js, ExpressJs, and postgreSQL
 
-1. Clone this repository to your local machine `git clone BOILERPLATE-URL NEW-PROJECTS-NAME`
-2. `cd` into the cloned repository
-3. Make a fresh start of the git history for this project with `rm -rf .git && git init`
-4. Install the node dependencies `npm install`
-5. Move the example Environment file to `.env` that will be ignored by git and read by the express server `mv example.env .env`
-6. Edit the contents of the `package.json` to use NEW-PROJECT-NAME instead of `"name": "express-boilerplate",`
+## Get user information
 
-## Scripts
+### Get all user information
+#### Request
+GET /api/users/:username
+#### Response
+```javascript
+[
+  {
+    "id":"",
+    "username":"",
+    "nickname":"",
+  }
+]
+```
 
-Start the application `npm start`
+### Get user nickname
+#### Request
+GET /api/users/:username/name
+#### Response
+```javascript
+{
+  [
+    "nickname":"name"
+  ]
+}
+```
 
-Start nodemon for the application `npm run dev`
+### Get user teams info
+#### Request 
+GET /api/users/:user_name/teams
+#### Response
+```javascript
+[
+  {
+  "id":number,
+  "teamcode":"",
+  "teamname":"",
+  "wins":number,
+  "firstplace":number,
+  "secondplace":number,
+  "thirdplace":number,
+  "winnings":number,
+  "members":[
+              {
+                "username":"",
+                "role:"",
+                "nickname":""
+              }
+             ]
+  }
+]
+```
 
-Run the tests `npm test`
+## Get team information
 
-## Deploying
+### Get team id
+#### Request
+GET /api/teams/:teamcode/exists
+#### Response
+```javascript
+[
+  {
+    "id":number
+  }
+[
+```
+### Get team info (without users)
+#### Request
+GET /api/teams/:teamcode/team
+#### Response
+```javascript
+[
+  {
+    "id":number,
+    "teamcode":"",
+    "teamname":"",
+    "wins":number,
+    "firstplace":number,
+    "secondplace":number,
+    "thirdplace":number,
+    "winningd":number
+  }
+]
+```
+### Get team members
+#### Request
+GET /api/teams/:teamcode/members
+#### Response
+```javascript
+[
+  {
+    "username":"",
+    "nickname":"",
+    "role":""
+  }
+]
+```
+### Get Role of user on team
+#### Request
+GET /api/teams/:teamcode/:username/role
+#### Response
+``` javascript
+[
+  {
+    "role":""
+  }
+[
+```
+### Get nicknames of all members on team
+#### Request 
+GET /api/teams/:teamcode/names
+#### Response
+```javascript
+[
+  nickname
+]
+```
 
-When your new project is ready for deployment, add a new Heroku application with `heroku create`. This will make a new git remote called "heroku" and you can then `npm run deploy` which will push to this remote's master branch.
+## Post user information
+
+### Post new user
+#### Request
+POST /api/users/
+#### Response
+```javascript
+[
+  {
+    "id":number,
+    "username":"",
+    "nickname":"",
+    "password":"",
+  }
+]
+```
+
+### Post new user and add them to team
+#### Request
+POST /api/users/:user_name/teams
+#### Response
+```javascript
+
+[
+  {
+    "username":"",
+    "nickname":"",
+    "role":""
+  }
+]
+
+```
+
+## Add team information
+### Add new team
+#### Request
+PATCH /api/teams/
+#### Response
+```javascript
+[
+  {
+    "id":number,
+    "teamcode":"",
+    "teamname":"",
+    "wins":number,
+    "firstplace":number,
+    "secondplace":number,
+    "thirdplace":number,
+    "winningd":number
+  }
+]
+```
+### Add user to team
+#### Request
+POST /api/teams/:team_code/members
+#### Response
+```javascript
+[
+  {
+    "id":number,
+    "playerid":number,
+    "team_id":number,
+    "role":""
+  }
+]
+```
+### Add event to team
+#### Request
+POST /api/teams/:team_code/event
+#### Response
+```javascript
+[
+  {
+    "id":number,
+    "teamcode":"",
+    "teamname":"",
+    "wins":number,
+    "firstplace":number,
+    "secondplace":number,
+    "thirdplace":number,
+    "winningd":number
+  }
+]
+```
+## Change user information
+
+### Change username
+#### Request
+PATCH /api/users/:username
+#### Response
+```javascript
+[
+  {
+    "id":number,
+    "username":"",
+    "password":"",
+    "nickname":""
+  }
+[
+```
+### Change nickname
+#### Request
+PATCH /api/users/:user_name/name
+#### Response
+```javascript
+[
+  {
+    "id":number,
+    "username":"",
+    "password":"",
+    "nickname":""
+```
+
+## Change team information
+### Change team name
+#### Request
+PATCH /api/teams/:team_code/team
+#### Response
+```javascript
+[
+  {
+    "id":number,
+    "teamcode":"",
+    "teamname":"",
+    "wins":number,
+    "firstplace":number,
+    "secondplace":number,
+    "thirdplace":number,
+    "winningd":number
+  }
+]
+```
+### Change user role on team
+#### Request
+PATCH /api/teams/:team_code/:user_name/role
+#### Response
+```javascript
+[
+  {
+    "id":number,
+    "playerid":number,
+    "team_id":number,
+    "role":""
+  }
+]
+```
+### Change team winnings
+#### Request
+PATCH /api/teams/:team_code/winnings
+#### Response
+```javascript
+[
+  {
+    "id":number,
+    "teamcode":"",
+    "teamname":"",
+    "wins":number,
+    "firstplace":number,
+    "secondplace":number,
+    "thirdplace":number,
+    "winningd":number
+  }
+]
+```
+
+
